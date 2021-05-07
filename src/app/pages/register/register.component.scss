@@ -1,0 +1,117 @@
+.on_top_of_body {
+  height: 100%;
+  position: relative;
+  margin: 0;
+  width: 100%;
+  font-family: "Nunito";
+}
+
+.form_container {
+  h1 {
+    color: black;
+    font-family: "Nunito";
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 5px;
+  }
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(5px);
+  border-radius: 5px;
+  position: relative;
+  top: 50%;
+  -ms-transform: translate(0%, -50%);
+  transform: translate(0%, -50%);
+  max-width: 600px;
+  min-width: 300px;
+  box-shadow: 0 0 10px rgb(192, 202, 191);
+  padding: 20px;
+  margin: 0 auto;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.open_data {
+  color: #879862;
+  h1 {
+    text-align: center;
+    font-family: cursive;
+  }
+}
+
+.logo {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  img {
+    margin: 0 auto;
+  }
+}
+
+.login {
+  height: 50px;
+  text-align: center;
+  button {
+    width: 60%;
+    background-color: rgb(76, 119, 21);
+    font-weight: bolder;
+    border-radius: 30px;
+    padding: 10px;
+  }
+  h1 {
+    color: white;
+  }
+}
+
+a {
+  color: rgb(6, 6, 190);
+  text-align: center;
+  text-decoration: none;
+}
+.remember_me {
+  text-align: center;
+  height: 50px;
+  color: white;
+  mat-checkbox {
+    float: left;
+  }
+  a {
+    float: right;
+  }
+}
+
+mat-icon {
+  color: rgb(3, 3, 214);
+}
+
+::ng-deep {
+  .mat-form-field .mat-form-field-flex {
+    background-color: whitesmoke;
+  }
+}
+
+mat-hint {
+  color: rgb(204, 36, 36);
+}
+
+.passwordConfirmation {
+  margin-bottom: 10px;
+}
+
+.fields-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, auto));
+  gap: 1px;
+}
+
+.title {
+  margin-bottom: 20px;
+}
+.connecter {
+  text-align: center;
+  a {
+    font-weight: bolder;
+  }
+}

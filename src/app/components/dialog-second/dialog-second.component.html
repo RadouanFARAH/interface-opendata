@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>Agence vers Agent</h1>
+<div mat-dialog-content>
+    <mat-form-field appearance="fill">
+        <mat-label>Agence</mat-label>
+        <mat-select [(ngModel)]="dataToSend.selectedAgence">
+            <mat-option *ngFor="let agence of data" [value]='agence.agence'>
+                {{agence.agence}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Agent</mat-label>
+        <mat-select [(ngModel)]="dataToSend.selectedAgent">
+            <mat-option value='R91'>Agent1</mat-option>
+            <mat-option value='R91'>Agent2</mat-option>
+            <mat-option value='R91'>Agent3</mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Annuler</button>
+    <button mat-button [mat-dialog-close]="dataToSend" cdkFocusInitial>Ok</button>
+</div>

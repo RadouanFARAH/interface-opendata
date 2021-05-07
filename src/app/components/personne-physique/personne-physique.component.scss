@@ -1,0 +1,177 @@
+table {
+    width: 95%;
+    margin: 0 auto;
+}
+
+.focused {
+    background-color: lightblue !important;
+}
+
+.filter {
+    display: table !important;
+    width: 40% !important;
+    margin: 20px auto 10px auto !important
+}
+
+.fields-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.fields-container-of-three {
+    mat-form-field {
+        min-width: 200px;
+        width: 30%;
+        margin-left: 3%;
+    }
+}
+
+.fields-container-of-two {
+    margin-left: 3%;
+    mat-form-field {
+        min-width: 200px;
+        width: 45%;
+        margin-left: 3%;
+    }
+}
+
+.mat-tab-labels {
+    display: grid !important;
+    grid-template-columns: 25% 25% 25% 25% !important;
+}
+
+.register-button {
+    border-radius: 30px;
+    width: 100%;
+    height: 40px;
+    background-color: darkblue;
+    color: white;
+    border: none;
+    font-weight: 700;
+}
+
+.button-container {
+    width: 40%;
+    margin: 0 auto;
+    display: table;
+}
+
+.statut-message {
+    p {
+        text-align: center;
+    }
+    width: 100%;
+    height: 100px;
+    border-radius: 0px 50px 50px 50px;
+    background-color: rgb(172, 230, 114);
+    margin: 30px auto 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    animation-name: popup;
+    animation-duration: 1s;
+}
+
+.status {
+    width: 40%;
+    height: 100px;
+    margin: 30px auto 0 auto;
+}
+
+@keyframes popup {
+    from {
+        clip-path: circle(10% at 0% 0%);
+        opacity: 0;
+    }
+    to {
+        clip-path: circle(150% at 0% 0%);
+        opacity: 1;
+    }
+}
+
+.inputfile {
+    width: 0px;
+    height: 0px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.inputfile+label {
+    font-size: 1.2em;
+    font-weight: 500;
+    color: white;
+    background-color: rgb(29, 29, 212);
+    display: inline-block;
+    text-align: center;
+}
+
+label {
+    padding: 20px;
+    border-radius: 50px;
+    width: 100%;
+    width: -moz-available;
+    /* WebKit-based browsers will ignore this. */
+    width: -webkit-fill-available;
+    /* Mozilla-based browsers will ignore this. */
+    width: stretch;
+    font-family: 'Nunito';
+}
+
+.inputfile:focus+label,
+.inputfile+label:hover {
+    background-color: darkblue;
+}
+
+.inputfile+label {
+    cursor: pointer;
+}
+
+.inputfile:focus+label {
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 5px;
+}
+
+.upload-title {
+    text-align: center;
+    font-weight: 500;
+    font-family: 'Nunito';
+    margin: 0;
+}
+
+.code {
+    display: table !important;
+    margin: 20px auto 10px auto !important;
+    width: 50%;
+}
+
+pre {
+    margin: 0;
+}
+
+pre code {
+    background-color: rgb(0, 0, 0);
+    border: 1px solid rgb(23, 4, 73);
+    display: block;
+    padding: 20px;
+    color: blanchedalmond;
+    border-radius: 5px;
+    font-weight: 500;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+mat-spinner {
+    margin: 0 auto !important;
+}
+
+.success {
+    background-color: rgb(221, 40, 40);
+}
+
+.status-success {
+    width: 100%;
+    height: 100px;
+    margin: 30px auto 0 auto;
+}

@@ -1,0 +1,93 @@
+.on_top_of_body {
+  height: 100%;
+  position: relative;
+  margin: 0;
+  width: 100%;
+  font-family: 'Nunito';
+}
+
+.form_container {
+
+  background-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: 5px;
+  position: relative;
+  top: 50%;
+  -ms-transform: translate(0%,-50%);
+  transform: translate(0%,-50%);
+  max-width: 400px;
+  width: 400px;
+  box-shadow: 0 0 10px rgb(153, 189, 148);
+  padding: 30px;
+  margin: 0 auto;
+}
+
+mat-form-field {
+  width: 100%;
+  
+}
+
+
+.open_data {
+  color: #879862;
+  h1 {
+    text-align: center;
+    font-family: cursive;
+  }
+}
+
+.logo {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  img {
+    margin: 0 auto;
+  }
+}
+
+.login {
+  height: 50px;
+  text-align: center;
+  button {
+    width: 80%;
+    background-color: rgb(76, 119, 21);
+    font-weight: bolder;
+    border-radius: 30px;
+  }
+  button:disabled{
+    background-color: #3a3a3a;
+  }
+}
+
+a {
+  color: rgb(6, 6, 190);
+  text-align: center;
+  text-decoration: none;
+}
+.remember_me {
+  text-align: center;
+  height: 50px;
+  color: white;
+  mat-checkbox {
+    float: left;
+  }
+  a {
+    float: right;
+  }
+}
+
+mat-icon {
+  color: rgb(3, 3, 214);
+}
+
+h1 {
+  margin: 0;
+  padding: 10px;
+  color: white;
+}
+::ng-deep {
+  .mat-form-field .mat-form-field-flex{
+    background-color: whitesmoke; 
+  }
+}

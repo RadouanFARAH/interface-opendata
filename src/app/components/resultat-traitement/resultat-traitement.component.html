@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>Choisir le Statut</h1>
+<div mat-dialog-content>
+    <mat-form-field appearance="fill">
+        <mat-label>Statut de Traitement</mat-label>
+        <mat-select [(ngModel)]="selectedStatus">
+            <mat-option *ngFor="let statut of data" [value]='statut.statut'>
+                {{statut.statut}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Annuler</button>
+    <button mat-button [mat-dialog-close]="selectedStatus" cdkFocusInitial>Ok</button>
+</div>

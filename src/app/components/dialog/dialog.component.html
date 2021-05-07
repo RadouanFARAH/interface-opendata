@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>Choisir l'agence</h1>
+<div mat-dialog-content>
+    <mat-form-field appearance="fill">
+        <mat-label>Agence</mat-label>
+        <mat-select [(ngModel)]="selectedAgence">
+            <mat-option *ngFor="let agence of data" [value]='agence.codeagence'>
+                {{agence.agence}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Annuler</button>
+    <button mat-button [mat-dialog-close]="selectedAgence" cdkFocusInitial>Ok</button>
+</div>

@@ -1,1 +1,137 @@
 /* You can add global styles to this file, and also import other style files */
+
+@import '~@angular/material/theming';
+// Define a custom typography config that overrides the font-family as well as the
+// `headlines` and `body-1` levels.
+$custom-typography: mat-typography-config( $font-family: 'Nunito');
+@include angular-material-typography($custom-typography);
+@include mat-core($custom-typography);
+html,
+body {
+    background: rgb(255, 255, 255);
+    background: linear-gradient( 180deg, rgba(255, 255, 255, 1) 50%, rgb(70, 105, 23) 50%, rgb(70, 105, 23) 100%);
+    background-repeat: no-repeat;
+    height: 100vh;
+    width: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: 'Nunito';
+}
+
+app-root {
+    width: 100%;
+}
+
+.mat-ink-bar {
+    height: 4px !important;
+    border-radius: 10px !important;
+    transition: 250ms cubic-bezier(0.35, 0, 0.25, 1) !important;
+}
+
+.mat-tab-label {
+    font-weight: 600 !important;
+}
+
+.mat-tab-label.mat-tab-label-active {
+    background-color: lightblue !important;
+    font-weight: 700 !important;
+}
+
+tr.mat-header-row {
+    background-color: #477103 !important;
+    font-weight: 700 !important;
+    color: #44611f;
+}
+
+.mat-sort-header-container {
+    color: white !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+}
+
+mat-tab-body {
+    padding: 20px !important;
+    width: 100%;
+}
+
+mat-sidenav-content {
+    background: linear-gradient( 180deg, rgba(255, 255, 255, 1) 90%, rgb(56, 97, 2) 100%);
+}
+
+.four {
+    .mat-tab-labels {
+        display: grid !important;
+        grid-template-columns: 25% 25% 25% 25% !important;
+    }
+}
+
+.two {
+    .mat-tab-labels {
+        display: grid !important;
+        grid-template-columns: 50% 50% !important;
+    }
+}
+
+.one {
+    .mat-tab-labels {
+        display: grid !important;
+        grid-template-columns: 100% !important;
+    }
+}
+
+.mat-form-field-flex {
+    border-radius: 50px !important;
+}
+
+.mat-form-field-underline {
+    display: none;
+}
+
+.mat-sort-header-container {
+    justify-content: center !important;
+}
+
+td {
+    text-align: center;
+    padding: 2px;
+    box-shadow: 0px 0px 1px #477103;
+}
+
+.mat-table {
+    overflow-x: scroll;
+}
+
+.mat-cell,
+.mat-header-cell {
+    word-wrap: initial;
+    display: table-cell;
+    padding: 0px 10px;
+    line-break: unset;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.mat-row,
+.mat-header-row {
+    display: table-row;
+}
+/* Importing Bootstrap SCSS file. */
+@import '~bootstrap/scss/bootstrap';
+
+/* Importing Bootstrap SCSS file. */
+@import '~bootstrap/scss/bootstrap';
+
+.mat-snack-bar-container{
+    background-color: rgb(218, 40, 40);
+}
+.mat-snack-bar-container .mat-simple-snackbar{
+    font-weight: 500;
+}
+.mat-snack-bar-container .mat-simple-snackbar-action{
+    font-weight: 700;
+    color: rgb(41, 1, 1);
+}

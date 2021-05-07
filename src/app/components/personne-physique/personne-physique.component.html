@@ -1,0 +1,228 @@
+<mat-tab-group class="four" (selectedTabChange)="makeItFocused($event)" color="primary">
+    <!-- Personne Physique  -->
+
+    <mat-tab label="Personne Physique">
+        <!-- Filter by statut-->
+        <mat-form-field class="filter" appearance="fill">
+            <mat-label>Filtrer par statut</mat-label>
+            <mat-select [(ngModel)]="selectedValue" (selectionChange)="onChange()">
+                <mat-option *ngFor="let statut of status" [value]="statut.value">
+                    {{ statut.viewValue }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!--  Table-->
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+            <ng-container matColumnDef="numTier">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>N° TIERS.</th>
+                <td mat-cell *matCellDef="let element">{{ element.numTier }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="numDossier">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Dossier.</th>
+                <td mat-cell *matCellDef="let element">{{ element.numDossier }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="nom">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom.</th>
+                <td mat-cell *matCellDef="let element">{{ element.nom }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="prenom">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Prénom.</th>
+                <td mat-cell *matCellDef="let element">{{ element.prenom }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="valeurID">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Valeur ID.</th>
+                <td mat-cell *matCellDef="let element">{{ element.valeurID }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="nomErreur">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Erreur</th>
+                <td mat-cell *matCellDef="let element">{{ element.nomErreur }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+        <mat-paginator [pageSizeOptions]="[1, 2, 3]" showFirstLastButtons></mat-paginator>
+    </mat-tab>
+
+    <!-- Ajouter PP TAB  -->
+    <mat-tab label="Ajouter PP">
+        <div class="form-container">
+            <form [formGroup]="person" (ngSubmit)="registerPerson()">
+                <div class="fields-container fields-container-of-three">
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Genre</mat-label>
+                        <mat-select formControlName="genre">
+                            <mat-option *ngFor="let genre of genres" [value]="genre.value">
+                                {{ genre.viewValue }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Nom</mat-label>
+                        <input formControlName="nom" matInput />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Prénom</mat-label>
+                        <input formControlName="prenom" matInput />
+                    </mat-form-field>
+                </div>
+
+                <div class="fields-container fields-container-of-two">
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>CIN</mat-label>
+                        <input formControlName="cin" matInput />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Date Expiration</mat-label>
+                        <input formControlName="dateExpiration" matInput [matDatepicker]="picker" />
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+
+                <div class="fields-container fields-container-of-two">
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Adresse</mat-label>
+                        <input formControlName="adresse" matInput />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Rue</mat-label>
+                        <input formControlName="rue" matInput />
+                    </mat-form-field>
+                </div>
+
+                <div class="fields-container fields-container-of-three">
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Quartier</mat-label>
+                        <input formControlName="quartier" matInput />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Ville</mat-label>
+                        <input formControlName="ville" matInput />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Code Postale</mat-label>
+                        <input formControlName="codePostale" matInput />
+                    </mat-form-field>
+                </div>
+
+                <div class="fields-container fields-container-of-three">
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Téléphone Domicile</mat-label>
+                        <input formControlName="teleDomicile" matInput />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Téléphone GSM</mat-label>
+                        <input formControlName="teleGSM" matInput />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Téléphone Professionel</mat-label>
+                        <input formControlName="teleProfessionel" matInput />
+                    </mat-form-field>
+                </div>
+
+                <div class="fields-container fields-container-of-two">
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Date Naissance</mat-label>
+                        <input formControlName="dateNaissance" matInput [matDatepicker]="pickerr" />
+                        <mat-datepicker-toggle matSuffix [for]="pickerr"></mat-datepicker-toggle>
+                        <mat-datepicker #pickerr></mat-datepicker>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Situation Familiale</mat-label>
+                        <mat-select formControlName="situationFamiliale">
+                            <mat-option *ngFor="let situation of situations" [value]="situation.value">
+                                {{ situation.viewValue | titlecase }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div class="fields-container fields-container-of-two">
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>N° RIB</mat-label>
+                        <input formControlName="rib" matInput />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Niveau Formalisme</mat-label>
+                        <mat-select formControlName="niveauFormalisme">
+                            <mat-option *ngFor="let formalisme of formalismes" [value]="formalisme.value">
+                                {{ formalisme.viewValue | titlecase }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div class="fields-container fields-container-of-two">
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Montant Demandé</mat-label>
+                        <input formControlName="montantDemande" matInput />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill" [floatLabel]="floatLabelControl.value">
+                        <mat-label>Nombre d'echéances</mat-label>
+                        <input formControlName="nombreEcheances" matInput />
+                    </mat-form-field>
+                </div>
+                <div class="button-container">
+                    <button class="register-button" type="submit">Register</button>
+                </div>
+            </form>
+        </div>
+    </mat-tab>
+    <mat-tab label="Upload Statut">
+        <div class="filter">
+            <h1 class="upload-title">Déposez votre fichier</h1>
+            <input type="file" [(ngModel)]="uploadedFile" name="file" id="file" class="inputfile" accept=".csv" (change)="uploadFile($event)" />
+            <label *ngIf="!showSpinner" for="file">Sélectionnez votre fichier</label>
+            <mat-spinner *ngIf="showSpinner"></mat-spinner>
+            <div *ngIf="message" class="status-success">
+                <div [ngClass]="{ 'statut-message': true, 'success':color }">
+                    <p>{{ message }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="code">
+            <h1 class="upload-title">Modèle de fichier :</h1>
+            <h3 class="upload-title">Fichier CSV (séparé par des virgules)</h3>
+            <pre>
+            <code><span style="color: rgb(53, 146, 221);">{{"statut"}}</span>{{","}}<span style="color: rgb(53, 140, 211);">{{"valeurID"}}</span>{{"\n"}}<span style="color: rgb(20, 220, 70);">{{"status 1"}}</span>{{","}}<span style="color: rgb(20, 220, 70);">{{"valeurID 1"}}</span>{{"\n"}}<span style="color: rgb(20, 220, 70);">{{"status 2"}}</span>{{","}}<span style="color: rgb(20, 220, 70);">{{"valeurID 2"}}</span>{{"\n"}}<span style="color: rgb(20, 220, 70);">{{"status 3"}}</span>{{","}}<span style="color: rgb(20, 220, 70);">{{"valeurID 3"}}</span></code>
+          </pre>
+
+        </div>
+        <!--<button (click)="showUploadedFile()">show it</button>-->
+    </mat-tab>
+    <mat-tab label="Etat dossier">
+        <mat-form-field (keydown)="keyDownFunction($event)" class="filter" appearance="fill">
+            <mat-label>Code du dossier</mat-label>
+            <input [(ngModel)]="selectedValueSearch" matInput placeholder="tapez le code du dossier" />
+            <mat-icon matPrefix>search</mat-icon>
+            <mat-hint *ngIf="false">Hint</mat-hint>
+        </mat-form-field>
+        <div class="button-container">
+            <button (click)="searchByCode()" class="register-button">
+        <span class="search">Chercher</span>
+      </button>
+        </div>
+        <div class="status">
+            <div [ngClass]="{ 'statut-message': true }">
+                <p>{{ statutMessage }}</p>
+            </div>
+        </div>
+    </mat-tab>
+</mat-tab-group>

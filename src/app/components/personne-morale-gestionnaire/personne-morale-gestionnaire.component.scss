@@ -1,0 +1,23 @@
+table {
+    width: 99%;
+    margin: 0 auto;
+}
+
+.focused {
+    background-color: lightblue !important;
+}
+
+.filter {
+    display: table !important;
+    width: 40% !important;
+    margin: 20px auto 10px auto !important
+}
+
+.mat-tab-labels {
+    display: grid !important;
+    grid-template-columns: 25% 25% 25% 25% !important;
+}
+
+.btn {
+    margin: 5px;
+}
