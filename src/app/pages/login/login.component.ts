@@ -22,7 +22,14 @@ export class LoginComponent implements OnInit {
     })
   }
 
-
+  connectt(event){
+    console.log(event.keyCode );
+    
+    if (event.keyCode === 13 ){
+      console.log('enter');
+      this.connect()
+    }
+  }
   connect(){
     console.log('connected')
     this.authService.login(this.data.value).subscribe((res:any)=>{

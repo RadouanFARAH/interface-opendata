@@ -1,4 +1,4 @@
-<mat-tab-group class="one" (selectedTabChange)="makeItFocused($event)" color="primary">
+<mat-tab-group class="one" (selectedTabChange)="makeItFocused($event)" color="warn">
     <!-- Personne Physique  -->
 
     <mat-tab label="Personne Physique">
@@ -70,23 +70,23 @@
             <ng-container matColumnDef="options">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>options</th>
                 <td mat-cell *matCellDef="let element">
-                    <button (click)="openDialog(element.valeurid)" class="btn" mat-raised-button color="primary">
+                    <!-- <button (click)="openDialog(element.valeurid)" class="btn" mat-raised-button color="warn">
                         Set Agence
                     </button>
-                    <button (click)="openDialogSecond(element.valeurid)" class="btn" mat-raised-button color="primary">
+                    <button (click)="openDialogSecond(element.valeurid)" class="btn" mat-raised-button color="warn">
                         Set Agent
                     </button>
                     <button (click)="getStatut(element.numtiers, element.codegestionnaire)" class="btn"
-                        mat-raised-button color="primary">
+                        mat-raised-button color="warn">
                         Get Statut
                     </button>
-                    <button (click)="sendToEvolan(element)" class="btn" mat-raised-button color="primary">
+                    <button (click)="sendToEvolan(element)" class="btn" mat-raised-button color="warn">
                         Send To Evolan
                     </button>
-                    <button (click)="openDialogResultatTraitement(element.valeurid)" class="btn" mat-raised-button color="primary">
+                    <button (click)="openDialogResultatTraitement(element.valeurid)" class="btn" mat-raised-button color="warn">
                         Set Resultat Traitement
-                    </button>
-                    <button (click)="send(element)" class="btn" mat-raised-button color="primary">
+                    </button> -->
+                    <button (click)="send(element)" class="btn" mat-raised-button color="warn">
                         Details
                     </button>
                 </td>

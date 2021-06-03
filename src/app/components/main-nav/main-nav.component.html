@@ -1,30 +1,35 @@
 <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="(isHandset$ | async) ? 'over' : 'side'">
+    <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+        [mode]="(isHandset$ | async) ? 'over' : 'side'">
         <mat-toolbar>
-            <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()" *ngIf="isHandset$ | async">
-        <mat-icon aria-label="Side nav toggle icon">close</mat-icon>
-      </button>
+            <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()"
+                *ngIf="isHandset$ | async">
+                <mat-icon aria-label="Side nav toggle icon">close</mat-icon>
+            </button>
             <span style="color: darkblue">Menu</span>
+            
         </mat-toolbar>
         <mat-nav-list>
-            <a *ngIf="isCLIENT" (click)="drawer.toggle()" mat-list-item [routerLink]="['pp']">
+            <!-- <a *ngIf="isCLIENT" (click)="drawer.toggle()" mat-list-item [routerLink]="['pp']">
                 <mat-icon>person</mat-icon> Personne Physique</a>
             <a *ngIf="isCLIENT" (click)="drawer.toggle()" mat-list-item [routerLink]="['pm']">
                 <mat-icon>domain</mat-icon> Personne Morale</a>
             <a *ngIf="isBO" (click)="drawer.toggle()" mat-list-item [routerLink]="['ppg']">
-                <mat-icon>person</mat-icon> Personne Physique</a>
-            <a *ngIf="isBO" (click)="drawer.toggle()" mat-list-item [routerLink]="['pmg']">
-                <mat-icon>person</mat-icon> Personne Morale</a>
+                <mat-icon>person</mat-icon> Personne Physique</a> -->
+            <!-- <a *ngIf="isBO" (click)="drawer.toggle()" mat-list-item [routerLink]="['pmg']">
+                <mat-icon>person</mat-icon> Personne Morale</a> -->
         </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content class="sidenav-content">
-        <mat-toolbar color="primary">
-            <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()" *ngIf="isHandset$ | async">
-        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-      </button>
+        <mat-toolbar color="warn">
+            <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()"
+                *ngIf="isHandset$ | async">
+                <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+            </button>
+            <button *ngIf="isHome" class="goback" (click)="back()"><mat-icon>arrow_back</mat-icon></button>
             <span class="slag">Al Amana OpenDATA</span>
             <span class="spacer"></span>
-            <a *ngIf="isCLIENT" [routerLink]="['pp']" [ngClass]="{ hidden: isHandset$ | async }" class="mat-button mat-button-base" aria-disabled="false"><span class="mat-button-wrapper">Personne Physique</span
+            <!-- <a *ngIf="isCLIENT" [routerLink]="['pp']" [ngClass]="{ hidden: isHandset$ | async }" class="mat-button mat-button-base" aria-disabled="false"><span class="mat-button-wrapper">Personne Physique</span
         ><span class="mat-button-focus-overlay"></span
       ></a>
             <a *ngIf="isCLIENT" [routerLink]="['pm']" [ngClass]="{ hidden: isHandset$ | async }" class="mat-button mat-button-base" aria-disabled="false"><span class="mat-button-wrapper">Personne Morale</span
@@ -32,13 +37,13 @@
       ></a>
             <a *ngIf="isBO" [routerLink]="['ppg']" [ngClass]="{ hidden: isHandset$ | async }" class="mat-button mat-button-base" aria-disabled="false"><span class="mat-button-wrapper">Personne Physique</span
         ><span class="mat-button-focus-overlay"></span
-      ></a>
-            <a *ngIf="isBO" [routerLink]="['pmg']" [ngClass]="{ hidden: isHandset$ | async }" class="mat-button mat-button-base" aria-disabled="false"><span class="mat-button-wrapper">Personne Morale</span
+      ></a> -->
+            <!-- <a *ngIf="isBO" [routerLink]="['pmg']" [ngClass]="{ hidden: isHandset$ | async }" class="mat-button mat-button-base" aria-disabled="false"><span class="mat-button-wrapper">Personne Morale</span
         ><span class="mat-button-focus-overlay"></span
-      ></a>
+      ></a> -->
             <button (click)="logout()" mat-icon-button>
-        <mat-icon>exit_to_app</mat-icon>
-      </button>
+                <mat-icon>exit_to_app</mat-icon>
+            </button>
         </mat-toolbar>
         <ng-content></ng-content>
     </mat-sidenav-content>

@@ -11,7 +11,9 @@ import { PpDataService } from './services/ppdata.service';
 import { PersonneDetailsComponent } from './components/personne-details/personne-details.component';
 import { AgenceDataService } from './services/agenceData.service';
 import { PmDataService } from './services/pmData.service';
+import { PmDataNewService } from './services/pmDataNew.service';
 import { AuthGuard } from './services/auth.guard';
+import { NotAuthGuard } from './services/not-auth.guard';
 const role = localStorage.getItem('role');
 console.log('routing', role, role === 'BO');
 const routes: Routes = [
@@ -23,15 +25,17 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+    canActivate:[NotAuthGuard]
   },
   {
     path: 'home',
     component: HomeComponent,
+    runGuardsAndResolvers: 'always',
     children: [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: role === 'BO' ? 'ppg' : 'pp',
+        redirectTo: 'pmg',
       },
       {
         path: 'pm',
@@ -46,18 +50,19 @@ const routes: Routes = [
       {
         path: 'ppg',
         component: PersonnePhysiqueGestionnaireComponent,
-        resolve: { pps: PpDataService, agences: AgenceDataService },
+        resolve: { pps: PpDataService, agences: AgenceDataService, ppsn:PmDataNewService },
         runGuardsAndResolvers: 'always'
       },
       {
         path: 'pmg',
         component: PersonneMoraleGestionnaireComponent,
-        resolve: { pms: PmDataService, agences: AgenceDataService },
+        resolve: { codes: PmDataService},
         runGuardsAndResolvers: 'always'
       },
       {
         path: 'details',
         component: PersonneDetailsComponent,
+        resolve: { villes: AgenceDataService},
         runGuardsAndResolvers: 'always'
       },
     ],

@@ -13,6 +13,7 @@ body {
     background-repeat: no-repeat;
     height: 100vh;
     width: 100%;
+    font-weight: 600;
 }
 
 body {
@@ -134,4 +135,30 @@ td {
 .mat-snack-bar-container .mat-simple-snackbar-action{
     font-weight: 700;
     color: rgb(41, 1, 1);
+}
+.goback{
+    background: transparent;
+    border: none;
+    align-items: center;
+    display: flex;
+  }
+  .buttons span.mat-button-wrapper:hover{
+    color: rgb(6, 116, 206);
+}
+
+.mat-cell, .mat-header-cell{
+    width: 0;
+}
+input{
+    color: #157103;
+}
+.mat-toolbar-row, .mat-toolbar-single-row {
+    height: 50px;
+}
+.mat-form-field-wrapper {
+    padding-bottom: 0.8em;
+}
+.successClassSnack{
+    background-color: #477103;
+    color: aliceblue;
 }

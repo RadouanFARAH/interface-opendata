@@ -40,14 +40,14 @@
       </div>
   
       <p class="remember_me">
-        <mat-checkbox formControlName="remember" color="primary">Se rappeler de moi</mat-checkbox>
+        <mat-checkbox formControlName="remember" color="warn">Se rappeler de moi</mat-checkbox>
         <a href="#">Mot de passe oublié?</a>
       </p>
     </form>
 
 
     <p class="login">
-      <button [disabled]="!data.valid" mat-raised-button (click)="connect()">
+      <button [disabled]="!data.valid" mat-raised-button (keydown)="connectt($event)" (click)="connect()">
         <h1>se connecter</h1>
       </button>
     </p>

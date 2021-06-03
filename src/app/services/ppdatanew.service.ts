@@ -6,9 +6,9 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class PpDataService implements Resolve<Object>{
+export class PpDataNewService implements Resolve<Object>{
   constructor(private http:HttpClient) { }
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): any[] | Observable<Object> | Promise<any[]> {
-    return this.http.get('https://192.168.140.30:3132/api/getListPP')
+    return this.http.get('https://192.168.140.30:3132/api/nouvellesdemandes')
   }
 }

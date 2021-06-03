@@ -207,12 +207,12 @@ export class PersonnePhysiqueGestionnaireComponent implements OnInit {
         valeurid:personne.valeurid
       }
       console.log('body to send',body)
-      this.callServer.updatePersonne(body).subscribe((res)=>{
-        console.log(res)
-        this.reloadComponent();
-      }, (err)=>{
-        console.log('error from 3131',err)
-      })
+      // this.callServer.updatePersonne(body).subscribe((res)=>{
+      //   console.log(res)
+      //   this.reloadComponent();
+      // }, (err)=>{
+      //   console.log('error from 3131',err)
+      // })
     },(err)=>{
       console.log('error from 3737',err)
     })

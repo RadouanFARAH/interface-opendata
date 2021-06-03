@@ -21,3 +21,9 @@ table {
 .btn {
     margin: 5px;
 }
+
+td , th {
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 10%;
+}

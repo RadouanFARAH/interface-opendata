@@ -4,7 +4,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './pages/login/login.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import {MatTableExporterModule } from 'mat-table-exporter';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -52,7 +52,7 @@ import { DialogComponent } from './components/dialog/dialog.component';
 import { DialogSecondComponent } from './components/dialog-second/dialog-second.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResultatTraitementComponent } from './components/resultat-traitement/resultat-traitement.component';
-
+import {SafeHtmlPipe} from './santi.pipe'
 
 const MaterialAngularModules = [
   MatCheckboxModule,
@@ -89,8 +89,8 @@ const MaterialAngularModules = [
 ];
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, HomeComponent, MainNavComponent, PersonnePhysiqueComponent, PersonneMoraleComponent, RegisterComponent, PersonnePhysiqueGestionnaireComponent, PersonneMoraleGestionnaireComponent, PersonneDetailsComponent, DialogComponent, DialogSecondComponent, ResultatTraitementComponent],
-  imports: [HttpClientModule,BrowserModule,FormsModule,ReactiveFormsModule, AppRoutingModule, BrowserAnimationsModule, MaterialAngularModules, LayoutModule, MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule, MatListModule, NgbModule],
+  declarations: [AppComponent, LoginComponent, HomeComponent, MainNavComponent, PersonnePhysiqueComponent, PersonneMoraleComponent, RegisterComponent, PersonnePhysiqueGestionnaireComponent, PersonneMoraleGestionnaireComponent, PersonneDetailsComponent, DialogComponent, DialogSecondComponent, ResultatTraitementComponent, SafeHtmlPipe],
+  imports: [MatTableExporterModule, HttpClientModule,BrowserModule,FormsModule,ReactiveFormsModule, AppRoutingModule, BrowserAnimationsModule, MaterialAngularModules, LayoutModule, MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule, MatListModule, NgbModule],
   providers: [{
     provide:HTTP_INTERCEPTORS,
     useClass:TokenInterceptorService,

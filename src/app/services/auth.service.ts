@@ -9,7 +9,7 @@ export class AuthService {
   constructor(private http:HttpClient) { }
 
   login(credentials){
-    return this.http.post('https://localhost:3131/api/login',credentials)
+    return this.http.post('https://192.168.140.30:3132/api/login',credentials)
   }
   getToken(){
     return localStorage.getItem('token')
