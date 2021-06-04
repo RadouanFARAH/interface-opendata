@@ -26,7 +26,9 @@
                 *ngIf="isHandset$ | async">
                 <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
             </button>
-            <button *ngIf="isHome" class="goback" (click)="back()"><mat-icon>arrow_back</mat-icon></button>
+            <button *ngIf="isHome" class="goback" (click)="back()"><mat-icon style="position: relative;
+                bottom: 10px;
+                right: 20px;" matPrefix><img src="../../../assets/back.png" alt="account icon"></mat-icon></button>
             <span class="slag">Al Amana OpenDATA</span>
             <span class="spacer"></span>
             <!-- <a *ngIf="isCLIENT" [routerLink]="['pp']" [ngClass]="{ hidden: isHandset$ | async }" class="mat-button mat-button-base" aria-disabled="false"><span class="mat-button-wrapper">Personne Physique</span
@@ -42,7 +44,9 @@
         ><span class="mat-button-focus-overlay"></span
       ></a> -->
             <button (click)="logout()" mat-icon-button>
-                <mat-icon>exit_to_app</mat-icon>
+                <mat-icon style="position: relative;
+                bottom: 10px;
+                right: 20px;" matPrefix><img src="../../../assets/exit.png" alt="account icon"></mat-icon>
             </button>
         </mat-toolbar>
         <ng-content></ng-content>

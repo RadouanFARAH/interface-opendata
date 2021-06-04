@@ -12,7 +12,8 @@
         <mat-form-field appearance="fill">
           <mat-label>Identifiant</mat-label>
           <input formControlName="identifiant" matInput placeholder="Identifiant" />
-          <mat-icon matPrefix>account_box</mat-icon>
+          <mat-icon style="position: relative;
+          bottom: 7px;" matPrefix><img src="../../../assets/account.png" alt="account icon"></mat-icon>
           <mat-hint *ngIf="false">Hint</mat-hint>
         </mat-form-field>
       </div>
@@ -25,7 +26,8 @@
             [type]="hide ? 'password' : 'text'"
             placeholder="Mot de passe"
           />
-          <mat-icon matPrefix>lock</mat-icon>
+          <mat-icon style="position: relative;
+          bottom: 7px;" matPrefix><img src="../../../assets/lock-open.png" alt="account icon"></mat-icon>
           <mat-hint *ngIf="false">Hint</mat-hint>
           <button
             mat-icon-button
@@ -34,15 +36,18 @@
             [attr.aria-label]="'Hide password'"
             [attr.aria-pressed]="hide"
           >
-            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+            <mat-icon style="position: relative;
+          bottom: 7px;" matPrefix><img *ngIf="!hide" src="../../../assets/visible.png" alt="account icon"></mat-icon>
+                      <mat-icon style="position: relative;
+                      bottom: 7px;" matPrefix><img *ngIf="hide" src="../../../assets/invisible.png" alt="account icon"></mat-icon>
           </button>
         </mat-form-field>
       </div>
   
-      <p class="remember_me">
+      <!-- <p class="remember_me">
         <mat-checkbox formControlName="remember" color="warn">Se rappeler de moi</mat-checkbox>
         <a href="#">Mot de passe oublié?</a>
-      </p>
+      </p> -->
     </form>
 
 
@@ -57,6 +62,6 @@
   </p>
   -->
 
-    <p style="text-align: center"><a href="/register">Créer un compte</a></p>
+    <!-- <p style="text-align: center"><a href="/register">Créer un compte</a></p> -->
   </div>
 </div>

@@ -54,7 +54,10 @@
             [attr.aria-label]="'Hide password'"
             [attr.aria-pressed]="hide"
           >
-            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+          <mat-icon style="position: relative;
+          bottom: 7px;" matPrefix><img *ngIf="!hide" src="../../../assets/visible.png" alt="account icon"></mat-icon>
+                      <mat-icon style="position: relative;
+                      bottom: 7px;" matPrefix><img *ngIf="hide" src="../../../assets/invisible.png" alt="account icon"></mat-icon>
           </button>
         </mat-form-field>
       </div>
@@ -77,7 +80,10 @@
             [attr.aria-label]="'Hide password'"
             [attr.aria-pressed]="hide"
           >
-            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+          <mat-icon style="position: relative;
+          bottom: 7px;" matPrefix><img *ngIf="!hide" src="../../../assets/visible.png" alt="account icon"></mat-icon>
+                      <mat-icon style="position: relative;
+                      bottom: 7px;" matPrefix><img *ngIf="hide" src="../../../assets/invisible.png" alt="account icon"></mat-icon>
           </button>
         </mat-form-field>
       </div>
