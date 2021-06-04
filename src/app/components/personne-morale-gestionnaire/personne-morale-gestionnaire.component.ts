@@ -109,6 +109,13 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
           'prenom',
           'cin',
           'telgsm',
+          'resultatTraitement',
+          'nbrappel',
+          'entry_date',
+          'agence',
+          'codeagence',
+          'montantdemande',
+          'ville',
           'statuttraitement',
           'options',
         ];
@@ -139,8 +146,8 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
           p.entry_date = new Date(p.entry_date)
         });
         personnes.forEach((p) => {
-          this.db.getCodePostaleByVille(p.ville).then((row)=>{
-            p.codePostal = row[0].codePostale
+          this.db.getCodePostaleByVille(p.ville).then((row:any)=>{
+            if (row.length > 0)  p.codepostal = row[0].codePostale
           })
         });
         this.displayedColumns = [
@@ -153,7 +160,7 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
           'secteur',
           // 'projet',
           'agence',
-          'code_agence',
+          'codeagence',
           'entry_date',
           'options',
         ];
@@ -183,6 +190,12 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
           'telgsm',
           'resultatTraitement',
           'nbrappel',
+          'entry_date',
+          'agence',
+          'codeagence',
+          'montantdemande',
+          'ville',
+          'valeurid',
           'options',
         ];
         this.dataSource = new MatTableDataSource(personnes);

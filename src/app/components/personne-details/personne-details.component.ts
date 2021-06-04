@@ -70,7 +70,7 @@ export class PersonneDetailsComponent implements OnInit {
     { statut: 'Non intéressé' },
     { statut: 'Non éligible' },
     { statut: 'Injoignable' },
-    { statut: 'Intéressé plustard'},
+    { statut: 'Intéressé plustard' },
   ];
   url: any;
   url2: 'sip:0618265025';
@@ -117,7 +117,7 @@ export class PersonneDetailsComponent implements OnInit {
     private fb: FormBuilder // private server:CallServerService
   ) {
     setTimeout(() => {
-      this.isSettingEnded = true
+      this.isSettingEnded = true;
     }, 2000);
     this.dateadapter.setLocale('en-GB'); // dd/MM/YYYY
     this.activeRoute.data.subscribe((respp) => {
@@ -126,6 +126,7 @@ export class PersonneDetailsComponent implements OnInit {
     });
     this.activeRoute.queryParams.subscribe((res) => {
       this.personne = res;
+      console.log('le personne',res)
       let data = {
         agence: res.agence,
       };
@@ -164,10 +165,12 @@ export class PersonneDetailsComponent implements OnInit {
               console.log(this.personne.codePostal);
 
               this.form = this.fb.group({
-                email:[this.personne.email],
-                secteur:[this.personne.secteur],
-                projet:[this.personne.projet],
-                daterendezvous:[null],
+                agence: [this.personne.agence],
+                entry_date: [moment(this.personne.entry_date).format('L')],
+                email: [this.personne.email],
+                secteur: [this.personne.secteur],
+                projet: [this.personne.projet],
+                daterendezvous: [null],
                 typeclient: ['P'],
                 raisonsociale: [this.personne.raisonsociale],
                 raisonsocialesuite: [''],
@@ -175,7 +178,7 @@ export class PersonneDetailsComponent implements OnInit {
                 rcommerce: [this.personne.rcommerce],
                 nifiscale: [this.personne.nifiscale],
                 numpattente: [this.personne.numpattente],
-                datecreation: [datecreation],
+                datecreation: [ datecreation],
                 ribentreprise: [this.personne.ribentreprise],
                 formejuridique: [this.personne.formejuridique],
                 telbureau: [this.personne.telbureau],
@@ -188,16 +191,16 @@ export class PersonneDetailsComponent implements OnInit {
                 nom: [this.personne.nom],
                 prenom: [this.personne.prenom],
                 cin: [this.personne.cin],
-                dateexpiration: [dateexpiration],
+                dateexpiration: [ dateexpiration],
                 adresse: [this.personne.adresse],
                 rue: [this.personne.rue],
                 quartier: [this.personne.quartier],
-                codepostal: [this.personne.codePostal],
+                codepostal: [this.personne.codepostal],
                 ville: [res.ville],
                 teldomicile: [this.personne.teldomicile],
                 telgsm: [this.personne.telgsm],
                 telprofessionnel: [this.personne.telprofessionnel],
-                datenaissance: [datenaissance],
+                datenaissance: [ datenaissance],
                 situationfamiliale: [this.personne.situationfamiliale],
                 numrib: [this.personne.numrib],
                 niveauformalisme: ['1006'],
@@ -206,14 +209,14 @@ export class PersonneDetailsComponent implements OnInit {
                 codeagence: [this.villecodeagence],
                 codegestionnaire: ['RSS'],
                 action: ['TEST'],
-                canal: ['106'],
+                canal: ['107'],
                 codeagencecible: [''],
                 codeorganisme: ['RS'],
                 origine: ['RS'],
                 produit: [''],
                 statutTraitement: [this.personne.resultatTraitement],
                 id_od: [this.personne.id],
-                valeurid:[this.personne.valeurid]
+                valeurid: [this.personne.valeurid],
               });
             },
             (err) => console.log(err)
@@ -308,129 +311,142 @@ export class PersonneDetailsComponent implements OnInit {
   sendToEvolan() {
     let personne = this.form.value;
     console.log(personne);
-    if (personne.datecreation) {
-      personne.datecreation = moment(personne.datecreation).format('L');
+    if (personne.datenaissance){
+      personne.datenaissance =  moment(personne.datenaissance).format('L')
     }
-    if (personne.dateexpiration) {
-      personne.dateexpiration = moment(personne.dateexpiration).format('L');
+    if (personne.datecreation){
+      personne.datecreation =  moment(personne.datecreation).format('L')
     }
-    if (personne.datenaissance) {
-      personne.datenaissance = moment(personne.datenaissance).format('L');
+    if (personne.dateexpiration){
+      personne.dateexpiration =  moment(personne.dateexpiration).format('L')
+    }
+    if (personne.daterendezvous){
+      personne.daterendezvous =  moment(personne.daterendezvous).format('L')
     }
     if (personne.statutTraitement) {
       if (personne.statutTraitement === 'Intéressé') {
         personne.action = 'REC';
         var arabicCharUnicodeRange = /[\u0600-\u06FF]/;
-        console.log('rec');
-        if (!personne.nom) {      
+        console.log('recording...');
+        if (!personne.nom) {
+          console.log('le nom est obligatoire');
           this.HintNom = 'le nom est obligatoire';
           this.isHintNom = true;
-        } else if (personne.nom){
-          var key = personne.nom.charCodeAt(0);
-          var str = String.fromCharCode(key);
-          if ( arabicCharUnicodeRange.test(str) ){
-            this.HintNomAR = 'le nom doit être en francais';
-            this.isHintNomAR= true;
-          }   
-        } 
-        else if (!personne.prenom) {
-          console.log('rec');
+          return;
+        } else if (
+          arabicCharUnicodeRange.test(
+            String.fromCharCode(personne.nom.charCodeAt(0))
+          )
+        ) {
+          this.HintNomAR = 'le nom doit être en francais';
+          this.isHintNomAR = true;
+          return;
+        }
+        if (!personne.prenom) {
           this.HintPrenom = 'le prenom est obligatoire';
           this.isHintPrenom = true;
-        } else if (personne.prenom){
-          var key = personne.prenom.charCodeAt(0);
-          var str = String.fromCharCode(key);
-          if ( arabicCharUnicodeRange.test(str) ){
-            this.HintPrenomAR = 'le prenom doit être en francais';
-            this.isHintPrenomAR= true;
-          }  
-        } 
-        else if (!personne.genre) {
-          console.log('rec');
-
+          return;
+        } else if (
+          arabicCharUnicodeRange.test(
+            String.fromCharCode(personne.prenom.charCodeAt(0))
+          )
+        ) {
+          this.HintPrenomAR = 'le prenom doit être en francais';
+          this.isHintPrenomAR = true;
+          return;
+        }
+        if (!personne.genre) {
           this.HintGenre = 'le genre est obligatoire';
           this.isHintGenre = true;
-        } else if (!personne.cin) {
-          console.log('rec');
-
+          return;
+        }
+        if (!personne.cin) {
           this.HintCIN = 'le cin est obligatoire';
           this.isHintCIN = true;
-        } else if (!personne.situationfamiliale) {
-          console.log('rec');
-
+          return;
+        }
+        if (!personne.situationfamiliale) {
           this.HintSituationFamiliale =
             'la situation familiale est obligatoire';
           this.isHintSituationFamiliale = true;
-        } else if (!personne.codeagence) {
-          console.log('rec');
+          return;
+        }
+        if (!personne.codeagence) {
           this.HintCodeAgence = 'le Code Agence est obligatoire';
           this.isHintCodeAgence = true;
-        } else if (!personne.adresse) {
-          console.log('rec');
+          return;
+        }
+        if (!personne.adresse) {
           this.HintAdresse = "l'adresse est obligatoire";
           this.isHintAdresse = true;
-        }else if(personne.adresse){
-          var key = personne.adresse.charCodeAt(0);
-          var str = String.fromCharCode(key);
-          if ( arabicCharUnicodeRange.test(str) ){
-            this.HintAdresseAR = 'l\'adresse doit être en francais';
-            this.isHintAdresseAR= true;
-          }  
-        } 
-        else if (!personne.ville) {
-          console.log('rec');
+          return;
+        } else if (
+          arabicCharUnicodeRange.test(
+            String.fromCharCode(personne.adresse.charCodeAt(0))
+          )
+        ) {
+          this.HintAdresseAR = "l'adresse doit être en francais";
+          this.isHintAdresseAR = true;
+          return;
+        }
+        if (!personne.ville) {
           this.HintVille = 'la ville est obligatoire';
           this.isHintVille = true;
-        }else if(personne.ville){
-          var key = personne.ville.charCodeAt(0);
-          var str = String.fromCharCode(key);
-          if ( arabicCharUnicodeRange.test(str) ){
-            this.HintVilleAR = 'la ville doit être en francais';
-            this.isHintVilleAR= true;
-          }  
-        } 
-        else {
-          console.log('rec');
-    this.isSettingEnded = false;
-
-          this.callServer.sendToEvolan(personne).subscribe(
-            (res: any) => {
-              this.router.navigate(['home']).then(() => {
-                let snackBarRef = this.snackBar.open(
-                  'Demande enregistrer avec ID :' + res.msg,
-                  'OK',
-                  {
-                    duration: 15000,
-                    horizontalPosition: 'center',
-                    verticalPosition: 'bottom',
-                    panelClass: 'successClassSnack',
-                  }
-                );
-                snackBarRef.onAction().subscribe(() => {
-                  snackBarRef.dismiss();
-                });
-              });
-            },
-            (err) => {
-    this.isSettingEnded = true;
-
-              err.error.forEach((an) => {
-                let snackBarRef = this.snackBar.open(
-                  an.champ + an.anomalie,
-                  'OK',
-                  {
-                    duration: 15000,
-                    horizontalPosition: 'center',
-                    verticalPosition: 'top',
-                  }
-                );
-                snackBarRef.onAction().subscribe(() => {
-                  snackBarRef.dismiss();
-                });
-              });
-            }
-          );
+          return;
+        } else if (
+          arabicCharUnicodeRange.test(
+            String.fromCharCode(personne.ville.charCodeAt(0))
+          )
+        ) {
+          this.HintVilleAR = 'la ville doit être en francais';
+          this.isHintVilleAR = true;
+          return;
         }
+        this.isSettingEnded = false;
+        this.callServer.sendToEvolan(personne).subscribe(
+          (res: any) => {
+            this.router.navigate(['home']).then(() => {
+              let snackBarRef = this.snackBar.open(
+                'Demande enregistrer avec ID :' + res.msg,
+                'OK',
+                {
+                  duration: 15000,
+                  horizontalPosition: 'center',
+                  verticalPosition: 'bottom',
+                  panelClass: 'successClassSnack',
+                }
+              );
+              snackBarRef.onAction().subscribe(() => {
+                snackBarRef.dismiss();
+              });
+            });
+          },
+          (err) => {
+            if (err.status === 500) {
+              let snackBarRef = this.snackBar.open('une erreur est survenue, veuillez réessayer plustard', 'OK', {duration:15000, horizontalPosition:'center', verticalPosition:'top'});
+              snackBarRef.onAction().subscribe(()=>{
+                snackBarRef.dismiss()
+              })
+            }else {
+            this.isSettingEnded = true;
+
+            err.error.forEach((an) => {
+              let snackBarRef = this.snackBar.open(
+                an.champ + an.anomalie,
+                'OK',
+                {
+                  duration: 15000,
+                  horizontalPosition: 'center',
+                  verticalPosition: 'top',
+                }
+              );
+              snackBarRef.onAction().subscribe(() => {
+                snackBarRef.dismiss();
+              });
+            });
+          }
+          }
+        );
       } else {
         if (personne.statutTraitement === 'nouvelle') {
           console.log('please insert a status');
@@ -438,12 +454,10 @@ export class PersonneDetailsComponent implements OnInit {
           this.isHintStatutTraitement = true;
         } else {
           personne.action = 'TEST';
-    this.isSettingEnded = false;
+          this.isSettingEnded = false;
 
           this.callServer.sendToEvolan(personne).subscribe(
             (res: any) => {
-
-
               this.router.navigate(['home']).then(() => {
                 let snackBarRef = this.snackBar.open(
                   'Demande enregistrer avec ID :' + res.msg,
@@ -461,8 +475,8 @@ export class PersonneDetailsComponent implements OnInit {
               });
             },
             (err) => {
-    this.isSettingEnded = true;
-              
+              this.isSettingEnded = true;
+
               err.error.forEach((an) => {
                 let snackBarRef = this.snackBar.open(
                   an.champ + an.anomalie,
