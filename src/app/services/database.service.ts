@@ -22,24 +22,24 @@ export class DatabaseService {
       this.Database = db;
     }
     this.http
-    .get('https://192.168.140.30:3132/api/getCodePostales')
+    .get('https://intranet.alamana.org.ma:3132/api/getCodePostales')
     .subscribe((res: any) => {
       this.CodePostales = res.results;
-      if (window.openDatabase === undefined) {
+      // if (window.openDatabase === undefined) {
         localStorage.setItem('CodePostales', JSON.stringify(this.CodePostales));
-      } else {
-        const db = window.openDatabase(
-          'OpenDataDB.db',
-          '1.0',
-          'DEV',
-          100 * 1024 * 1024
-        );
-        this.Database = db;
-        this.InsertCodePostalVille(this.CodePostales);
-      }
+      // } else {
+      //   const db = window.openDatabase(
+      //     'OpenDataDB.db',
+      //     '1.0',
+      //     'DEV',
+      //     100 * 1024 * 1024
+      //   );
+      //   this.Database = db;
+      //   this.InsertCodePostalVille(this.CodePostales);
+      // }
     });
     this.http
-      .get('https://192.168.140.30:3132/api/getListOrganisme')
+      .get('https://intranet.alamana.org.ma:3132/api/getListOrganisme')
       .subscribe((res: any) => {
         this.organismes = res;
         if (window.openDatabase === undefined) {
@@ -56,7 +56,7 @@ export class DatabaseService {
         }
       });
     this.http
-      .get('https://192.168.140.30:3132/api/getListALLAgence')
+      .get('https://intranet.alamana.org.ma:3132/api/getListALLAgence')
       .subscribe((res: any) => {
         this.agences = res;
         if (window.openDatabase === undefined) {
@@ -82,7 +82,7 @@ export class DatabaseService {
         [],
         (transaction, resultSet) => {
           agences.forEach((agence) => {
-            const InsertionQuery = `REPLACE into 'agences' (codeorganisme, codeagence, agence)  values('${agence.codeorganisme}','${agence.codeagence}','${agence.agence}' )`;
+            const InsertionQuery = `REPLACE into 'agences' (codeorganisme, codeagence, agence)  values("${agence.codeorganisme}","${agence.codeagence}","${agence.agence}" )`;
             SQLtransaction.executeSql(
               InsertionQuery,
               [],
@@ -108,7 +108,7 @@ export class DatabaseService {
         [],
         (transaction, resultSet) => {
           organismes.forEach((organisme) => {
-            const InsertionQuery = `REPLACE into 'organismes' (codeorganisme, organisme)  values('${organisme.codeorganisme}','${organisme.organisme}' )`;
+            const InsertionQuery = `REPLACE into 'organismes' (codeorganisme, organisme)  values("${organisme.codeorganisme}","${organisme.organisme}" )`;
             SQLtransaction.executeSql(
               InsertionQuery,
               [],
@@ -156,7 +156,7 @@ export class DatabaseService {
         resolve(filtredAgences)
       }else{
         this.Database.transaction((SQLtransaction) => {
-          const GettingQuery = `select codeagence, agence from agences where codeorganisme='${organisme}';`;
+          const GettingQuery = `select codeagence, agence from agences where codeorganisme="${organisme}";`;
           SQLtransaction.executeSql(
             GettingQuery,
             [],
@@ -177,19 +177,19 @@ export class DatabaseService {
   }
 
   InsertCodePostalVille(data) {
+    console.log('creating codepostalville...');
+    
     this.Database.transaction((SQLtransaction) => {
       const CreationQuery =
-        `CREATE TABLE IF NOT EXISTS villecodepostale (
-          'id' INT NOT NULL AUTO_INCREMENT,
-          'ville' VARCHAR(45) NULL DEFAULT NULL,
-          'codePostale' VARCHAR(45) NULL DEFAULT NULL,
-          PRIMARY KEY ('id'));`
+        `CREATE TABLE IF NOT EXISTS 'villecodepostale' (codePostale text PRIMARY KEY,ville text)`
       SQLtransaction.executeSql(
         CreationQuery,
         [],
         (transaction, resultSet) => {
           data.forEach((row) => {
-            const InsertionQuery = `REPLACE into 'villecodepostale' (ville, codePostale)  values('${row.ville}','${row.codePostale}' )`;
+            const InsertionQuery = `REPLACE into 'villecodepostale' (codePostale, ville)  values ("${row.codePostale}", "${row.ville}")`;
+            console.log(InsertionQuery);
+            
             SQLtransaction.executeSql(
               InsertionQuery,
               [],
@@ -203,39 +203,39 @@ export class DatabaseService {
           });
         },
         (transaction, error) => {
-          console.log('Error inserting ville with there codepostales', error);
+          console.log('Error creating ville with there codepostales', error);
         }
       );
     });
   }
   getCodePostaleByVille(ville:string) {
     return new Promise((resolve, reject) => {
-      if (this.Database === undefined){
+      // if (this.Database === undefined){
         console.log('from local storage')
         let CodePostales:any[] = JSON.parse(localStorage.getItem('CodePostales'))
         console.log('Ville : ', ville.toUpperCase().replace('É','E').replace('È','E'))
         let filtredCodePostales = CodePostales.filter(row=>row.ville===ville.toUpperCase().replace('É','E').replace('È','E'))
         resolve(filtredCodePostales)
-      }else{
-        console.log('from local database ')
-        this.Database.transaction((SQLtransaction) => {
-          const GettingQuery = `select codePostal from villecodepostale where ville='${ville}';`;
-          SQLtransaction.executeSql(
-            GettingQuery,
-            [],
-            (transaction, resultSet) => {
-              resolve(resultSet);
-            },
-            (transaction, error) => {
-              console.log(
-                `Error getting codePostal by ville : ${ville}`,
-                error
-              );
-              reject(error);
-            }
-          );
-        });
-      } 
+      // }else{
+      //   console.log('from local database ')
+      //   this.Database.transaction((SQLtransaction) => {
+      //     const GettingQuery = `select codePostal from villecodepostale where ville="${ville}";`;
+      //     SQLtransaction.executeSql(
+      //       GettingQuery,
+      //       [],
+      //       (transaction, resultSet) => {
+      //         resolve(resultSet);
+      //       },
+      //       (transaction, error) => {
+      //         console.log(
+      //           `Error getting codePostal by ville : ${ville}`,
+      //           error
+      //         );
+      //         reject(error);
+      //       }
+      //     );
+      //   });
+      // } 
     });
   }
 }

@@ -1,120 +1,313 @@
-<mat-tab-group class="one" (selectedTabChange)="makeItFocused($event)" color="warn">
-    <!-- Personne Physique  -->
+<!-- <mat-tab-group class="one" (selectedTabChange)="makeItFocused($event)" color="warn"> -->
+<!-- Personne Physique  -->
+<!-- 
+    <mat-tab label="Les Demandes Réseaux Sociaux"> -->
+<div style="display: inline-flex">
+  <div class="fields">
+    <mat-form-field class="filter" appearance="fill">
+      <mat-label>Selectionner la source</mat-label>
+      <mat-select
+        [(ngModel)]="sourceSelectedValue"
+        (selectionChange)="sourceChanged()"
+      >
+        <mat-option *ngFor="let statut of source" [value]="statut.value">
+          {{ statut.viewValue }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field
+      style="width: 130px"
+      *ngIf="sourceSelectedValue === 'qualifier'"
+      class="filter"
+      appearance="fill"
+    >
+      <mat-label>Filtrer par statut qualification</mat-label>
+      <mat-select
+        [(ngModel)]="statutQualifierSelectedValue"
+        (selectionChange)="onChangeAll('')"
+      >
+        <mat-option
+          *ngFor="let statut of statusQualifications"
+          [value]="statut.statutC"
+        >
+          {{ statut.statut }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field
+      style="width: 130px"
+      *ngIf="sourceSelectedValue === 'prequalifier'"
+      class="filter"
+      appearance="fill"
+    >
+      <mat-label>Filtrer par statut traitement</mat-label>
+      <mat-select
+        [(ngModel)]="statutSelectedValue"
+        (selectionChange)="onChangeAll('')"
+      >
+        <mat-option
+          *ngFor="let statut of statusTraitement"
+          [value]="statut.statutC"
+        >
+          {{ statut.statut }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field
+      style="width: 130px"
+      *ngIf="sourceSelectedValue === 'evolan'"
+      class="filter"
+      appearance="fill"
+    >
+      <mat-label>Filtrer par statut</mat-label>
+      <mat-select
+        [(ngModel)]="selectedValue"
+        (selectionChange)="onChangeAll('')"
+      >
+        <mat-option *ngFor="let statut of status" [value]="statut.value">
+          {{ statut.viewValue }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <mat-form-field
+    style="width: 130px"
+    *ngIf="dataSource"
+    class="filter"
+    appearance="fill"
+  >
+    <mat-label>Mot Clé</mat-label>
+    <input
+      [(ngModel)]="selectedCINValue"
+      (keyup)="onChangeAll('')"
+      type="text"
+      maxlength="32"
+      minlength="3"
+      matInput
+    />
+  </mat-form-field>
+  <form *ngIf="dataSource" class="fieldss" [formGroup]="form2">
+    <mat-form-field style="width: 130px" class="filter" appearance="fill">
+      <input
+        matInput
+        placeholder="De"
+        [matDatepicker]="picker1"
+        formControlName="fromDate"
+        required
+        (click)="picker1.open()"
+      />
+      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+      <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field style="width: 130px" class="filter" appearance="fill">
+      <input
+        (keypress)="shoit()"
+        matInput
+        placeholder="à"
+        [matDatepicker]="picker2"
+        formControlName="toDate"
+        required
+        (click)="picker2.open()"
+      />
+      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+      <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
+    <br />
+    <button
+      style="width: 130px"
+      class="btnr"
+      mat-raised-button
+      color="warn"
+      (click)="onChangeAll('dem')"
+    >
+      Par date_dem
+    </button>
+    <button
+      style="width: 130px"
+      class="btnr"
+      mat-raised-button
+      color="warn"
+      (click)="onChangeAll('trait')"
+    >
+      Par date_trait
+    </button>
+  </form>
+  <button
+    style="width: 130px"
+    *ngIf="
+      dataSource &&
+      (sourceSelectedValue == 'qualifier' ||
+        sourceSelectedValue == 'prequalifier')
+    "
+    class="btnr"
+    mat-raised-button
+    color="warn"
+    (click)="exportAsExcelFile()"
+  >
+    reporting de jour
+  </button>
+</div>
+<ngb-alert *ngIf="isAlert" type="danger">{{ alert }}</ngb-alert>
+<!--  Table-->
+<mat-spinner
+  style="margin: 0 auto"
+  *ngIf="!dataSource && isSourceSelected"
+></mat-spinner>
 
-    <mat-tab label="nouvelles demandes">
+<div *ngIf="dataSource">
+  <div>
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      matTableExporter
+      #exporter="matTableExporter"
+      class="mat-elevation-z8"
+      matSort
+    >
+      <ng-container matColumnDef="valeurid">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+        <td mat-cell *matCellDef="let element">{{ element.valeurid }}</td>
+      </ng-container>
+      <ng-container matColumnDef="nom">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom</th>
+        <td mat-cell *matCellDef="let element">{{ element.nom }}</td>
+      </ng-container>
 
-        <!-- Filter by statut-->
-        <mat-form-field class="filter" appearance="fill">
-            <mat-label>selectionner la source</mat-label>
-            <mat-select [(ngModel)]="sourceSelectedValue" (selectionChange)="sourceChanged()">
-                <mat-option *ngFor="let statut of source" [value]="statut.value">
-                    {{ statut.viewValue }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field *ngIf="sourceSelectedValue === 'prequalifier' " class="filter" appearance="fill">
-            <mat-label>Filtrer par statut traitement</mat-label>
-            <mat-select [(ngModel)]="statutSelectedValue" (selectionChange)="onChangeStatut()">
-                <mat-option *ngFor="let statut of statusTraitement" [value]="statut.statutC">
-                    {{ statut.statut }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field *ngIf="sourceSelectedValue === 'evolan' "  class="filter" appearance="fill">
-            <mat-label>Filtrer par statut</mat-label>
-            <mat-select [(ngModel)]="selectedValue" (selectionChange)="onChange()">
-                <mat-option *ngFor="let statut of status" [value]="statut.value">
-                    {{ statut.viewValue }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <ngb-alert *ngIf="isAlert" type="danger">{{ alert }}</ngb-alert>
-        <!--  Table-->
-        <mat-spinner style="margin: 0 auto;"  *ngIf="!dataSource && isSourceSelected"></mat-spinner>
+      <ng-container matColumnDef="prenom">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Prenom</th>
+        <td mat-cell *matCellDef="let element">{{ element.prenom }}</td>
+      </ng-container>
+      <ng-container matColumnDef="cin">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>CIN</th>
+        <td mat-cell *matCellDef="let element">{{ element.cin }}</td>
+      </ng-container>
+      <ng-container matColumnDef="telgsm">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Tel</th>
+        <td mat-cell *matCellDef="let element">{{ element.telgsm }}</td>
+      </ng-container>
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+        <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+      </ng-container>
+      <ng-container matColumnDef="ville">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Ville</th>
+        <td mat-cell *matCellDef="let element">{{ element.ville }}</td>
+      </ng-container>
+      <ng-container matColumnDef="agence">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Agence</th>
+        <td mat-cell *matCellDef="let element">{{ element.agence }}</td>
+      </ng-container>
+      <ng-container matColumnDef="codeagence">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Code<br />PDV</th>
+        <td mat-cell *matCellDef="let element">{{ element.codeagence }}</td>
+      </ng-container>
+      <ng-container matColumnDef="emaildr">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>DR</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.emaildr ? element.emaildr.split("@")[0] : "" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="emailds">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>DS</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.emailds ? element.emailds.split("@")[0] : "" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="entry_date">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date_Dem</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.entry_date | date: "dd/MM/yyyy" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="dateinsert">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date_trait</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.dateinsert | date: "dd/MM/yyyy" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="secteur">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Secteur</th>
+        <td mat-cell *matCellDef="let element">{{ element.secteur }}</td>
+      </ng-container>
+      <ng-container matColumnDef="montantdemande">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Montant</th>
+        <td mat-cell *matCellDef="let element">{{ element.montantdemande }}</td>
+      </ng-container>
+      <ng-container matColumnDef="nbrappel">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Nbr<br />Appel
+        </th>
+        <td mat-cell *matCellDef="let element">{{ element.nbrappel }}</td>
+      </ng-container>
+      <ng-container matColumnDef="resultatTraitement">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Pré<br />qualif
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{
+            element.resultatTraitement === "nouvelle"
+              ? ""
+              : element.resultatTraitement
+          }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="qualification">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Qualification</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.qualification }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="statuttraitement">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Statut<br />Dem
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{
+            element.numtiers
+              ? ""
+              : element.statuttraitement === "Demande envoyée"
+              ? ""
+              : element.statuttraitement
+          }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="montantdebloque">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Montant<br />Deb
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.montantdebloque }}
+        </td>
+      </ng-container>
 
-        <div *ngIf="dataSource">
-            <div style="margin: 40px auto;
-            display: table;">
-                <button style="margin-left: 10px;"  mat-raised-button (click)="exporter.exportTable('xlsx',{fileName:'demandes_data'})">Excel</button>
-                <button style="margin-left: 10px;"  mat-raised-button (click)="exporter.exportTable('csv',{fileName:'demandes_data'})">CSV</button>
-                <button style="margin-left: 10px;"  mat-raised-button (click)="exporter.exportTable('json',{fileName:'demandes_data'})">JSON</button>
-                <button style="margin-left: 10px;"  mat-raised-button (click)="exporter.exportTable('txt',{fileName:'demandes_data'})">TEXT</button>
-            </div>
-            <table mat-table  [dataSource]="dataSource" matTableExporter #exporter="matTableExporter" class="mat-elevation-z8" matSort>
+      <ng-container matColumnDef="user">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
+        <td mat-cell *matCellDef="let element">{{ element.user }}</td>
+      </ng-container>
 
-                <ng-container matColumnDef="nom">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom</th>
-                    <td mat-cell *matCellDef="let element">{{ element.nom }}</td>
-                </ng-container>
-    
-                <ng-container matColumnDef="prenom">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Prenom</th>
-                    <td mat-cell *matCellDef="let element">{{ element.prenom }}</td>
-                </ng-container>
-                <ng-container matColumnDef="cin">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>CIN</th>
-                    <td mat-cell *matCellDef="let element">{{ element.cin }}</td>
-                </ng-container>
-                <ng-container matColumnDef="telgsm">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tel</th>
-                    <td mat-cell *matCellDef="let element">{{ element.telgsm }}</td>
-                </ng-container>
-                <ng-container matColumnDef="resultatTraitement">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Resultat Traitement</th>
-                    <td mat-cell *matCellDef="let element">{{ element.resultatTraitement === 'nouvelle' ? '':element.resultatTraitement}}</td>
-                </ng-container>
-                <ng-container matColumnDef="statuttraitement">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Statut de demande</th>
-                    <td mat-cell *matCellDef="let element">{{ element.statuttraitement }}</td>
-                </ng-container>
-                <ng-container matColumnDef="montantdemande">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Montant demandé</th>
-                    <td mat-cell *matCellDef="let element">{{ element.montantdemande }}</td>
-                </ng-container>
-                <ng-container matColumnDef="secteur">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Secteur</th>
-                    <td mat-cell *matCellDef="let element">{{ element.secteur }}</td>
-                </ng-container>
-                <!-- <ng-container matColumnDef="projet">
+      <!-- <ng-container matColumnDef="projet">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Projet</th>
                     <td mat-cell *matCellDef="let element">{{ element.projet }}</td>
                 </ng-container> -->
-                <ng-container matColumnDef="email">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
-                    <td mat-cell *matCellDef="let element">{{ element.email }}</td>
-                </ng-container>
-                <ng-container matColumnDef="ville">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Ville</th>
-                    <td mat-cell *matCellDef="let element">{{ element.ville }}</td>
-                </ng-container>
-                <ng-container matColumnDef="agence">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Agence</th>
-                    <td mat-cell *matCellDef="let element">{{ element.agence }}</td>
-                </ng-container>
-                <ng-container matColumnDef="codeagence">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Code Agence</th>
-                    <td mat-cell *matCellDef="let element">{{ element.codeagence }}</td>
-                </ng-container>
-                <ng-container matColumnDef="entry_date">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Date Entrée</th>
-                    <td mat-cell *matCellDef="let element">{{ element.entry_date | date:'dd/mm/yyyy'}}</td>
-                </ng-container>
-                <ng-container matColumnDef="nbrappel">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre Appel</th>
-                    <td mat-cell *matCellDef="let element">{{ element.nbrappel }}</td>
-                </ng-container>
-                <ng-container matColumnDef="valeurid">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Valeur ID</th>
-                    <td mat-cell *matCellDef="let element">{{ element.valeurid }}</td>
-                </ng-container>
-                <!-- <ng-container matColumnDef="id_od">
+
+      <!-- <ng-container matColumnDef="id_od">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Id OD</th>
                     <td mat-cell *matCellDef="let element">{{ element.id_od }}</td>
                 </ng-container> -->
-                <ng-container matColumnDef="options">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>options</th>
-                    <td mat-cell *matCellDef="let element">
-                        <!-- <button (click)="openDialog(element.valeurid)" class="btn" mat-raised-button color="warn">
+      <ng-container matColumnDef="options">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+        <td mat-cell *matCellDef="let element">
+          <mat-icon
+            (click)="send(element)"
+            style="position: relative; margin-right: 4px; bottom: 3px"
+            matPrefix
+            ><img
+              style="width: 30px"
+              width="40px"
+              src="../../../assets/more.png"
+              alt="account icon"
+          /></mat-icon>
+          <!-- <button (click)="openDialog(element.valeurid)" class="btn" mat-raised-button color="warn">
                             Set Agence 
                         </button>
                         <button (click)="openDialogSecond(element.valeurid)" class="btn" mat-raised-button color="warn">
@@ -126,16 +319,106 @@
                         <button (click)="sendToEvolan(element)" class="btn" mat-raised-button color="warn">
                             Send To Evolan
                         </button> -->
-                        <button (click)="send(element)" class="btn" mat-raised-button color="warn">
-                            Details
-                        </button>
-                    </td>
-                </ng-container>
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-            </table>
-        </div>
-        <mat-paginator [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>
-        
-    </mat-tab>
-</mat-tab-group>
+          <!-- <button
+          
+          class="btn"
+          mat-raised-button
+          color="warn"
+        >
+          +
+        </button> -->
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        [ngStyle]="{ 'background-color': row.outdated ? '#FFCFBC' : 'white', 'color':row.numtiers=''?'red':'black' }"
+        *matRowDef="let row; columns: displayedColumns"
+      ></tr>
+    </table>
+  </div>
+
+  <div style="margin: 0px auto; display: table">
+    <button
+      style="margin: 10px"
+      mat-raised-button
+      (click)="exporter.exportTable('xlsx', { fileName: 'demandes_data' })"
+    >
+      Excel
+    </button>
+    <button
+      style="margin: 10px"
+      mat-raised-button
+      (click)="exporter.exportTable('csv', { fileName: 'demandes_data' })"
+    >
+      CSV
+    </button>
+    <button
+      style="margin: 10px"
+      mat-raised-button
+      (click)="exporter.exportTable('json', { fileName: 'demandes_data' })"
+    >
+      JSON
+    </button>
+    <button
+      style="margin: 10px"
+      mat-raised-button
+      (click)="exporter.exportTable('txt', { fileName: 'demandes_data' })"
+    >
+      TEXT
+    </button>
+  </div>
+  <div style="margin: 0px auto; display: table">
+    <button
+      style="width: 130px"
+      *ngIf="isBO"
+      class="btnr"
+      mat-raised-button
+      color="warn"
+      (click)="notifydsdr()"
+    >
+      Notifier les dr/ds
+    </button>
+    <button
+    style="width: 130px"
+    *ngIf="isBO"
+    class="btnr"
+    mat-raised-button
+    color="warn"
+    (click)="rappelerdsdr()"
+  >
+    Rappeler les dr/ds
+  </button>
+    <button
+      style="width: 130px"
+      *ngIf="isBO"
+      class="btnr"
+      mat-raised-button
+      color="warn"
+      (click)="notifyDPRM()"
+    >
+      Notifier le DPRM
+    </button>
+    <button
+      style="width: 150px"
+      *ngIf="isBO"
+      class="btnr"
+      mat-raised-button
+      color="warn"
+      (click)="MAJdemandeSorts()"
+    >
+      Récupiration des sorts
+    </button>
+  </div>
+  <!-- <div class="navigation-buttons">
+    <button mat-raised-button (click)="Previous()">Previous</button>
+    <button mat-raised-button (click)="Next()">Next</button>
+  </div> -->
+
+</div>
+<mat-paginator *ngIf="dataSource" 
+[pageSizeOptions]="pageSizeOptions">
+</mat-paginator>
+
+<!-- </mat-tab>
+</mat-tab-group> -->

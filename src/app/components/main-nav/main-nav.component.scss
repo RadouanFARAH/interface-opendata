@@ -10,7 +10,7 @@
   background: inherit;
 }
 .sidenav-content .mat-toolbar {
-  background:  #477103;
+  background:  rgb(32, 155, 19);
 }
 
 .mat-toolbar.mat-primary {
@@ -37,4 +37,10 @@ mat-icon{
   border: none;
   align-items: center;
   display: flex;
+}
+
+img{
+  width: 40px;
+margin-left: 10px;
+margin-top: 2px;
 }

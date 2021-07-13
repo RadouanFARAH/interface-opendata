@@ -12,15 +12,25 @@ export class PmDataNewService
  {
   constructor(private http:HttpClient) { }
   // resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): any[] | Observable<Object> | Promise<any[]> {
-  //   return this.http.post('https://192.168.140.30:3132/api/nouvellesdemandes',{})
+  //   return this.http.post('https://intranet.alamana.org.ma:3132/api/nouvellesdemandes',{})
   // }
-   getNouvellesDemandes(){
-    return this.http.post('https://192.168.140.30:3132/api/nouvellesdemandes', {})
+   getNouvellesDemandes(offset){
+    return this.http.post('https://intranet.alamana.org.ma:3132/api/nouvellesdemandes', {offset})
   }
-  getDemandesEvolan(){
-    return this.http.post('https://192.168.140.30:3132/api/demandesRS', {})
+  getDemandesEvolan(offset){
+    return this.http.post('https://intranet.alamana.org.ma:3132/api/demandesRS', {offset})
   }
-  getDemandesPrequalifies(){
-    return this.http.post('https://192.168.140.30:3132/api/demandesPrequalifies', {})
+  getDemandesQualifier(offset){
+    return this.http.post('https://intranet.alamana.org.ma:3132/api/demandesqualifer', {offset})
+  }
+  getDemandesPrequalifies(offset){
+    return this.http.post('https://intranet.alamana.org.ma:3132/api/demandesPrequalifies', {offset})
+  }
+  getDemandesPrequalifQualif(data){
+    return this.http.post('https://intranet.alamana.org.ma:3132/api/getDemandesPrequalifQualif', data)
+  }
+  setDemandesPrequalifQualif(data){
+    console.log(data)
+    return this.http.post('https://intranet.alamana.org.ma:3132/api/setDemandesPrequalifQualif', data)
   }
 }

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 
 @Component({
@@ -26,7 +26,8 @@ export class MainNavComponent {
   constructor(
     private breakpointObserver: BreakpointObserver,
     private route: Router,
-    private location: Location
+    private location: Location,
+    private activeRoute: ActivatedRoute
   ) {
     this.isHome = this.route.url !== '/home';
     this.role = localStorage.getItem('role');
@@ -37,9 +38,22 @@ export class MainNavComponent {
   }
 
   back(): void {
-    if (this.route.url.startsWith('/home')) {
-      this.route.routeReuseStrategy.shouldReuseRoute = () => false;
-      this.route.navigate(['home']).then(()=>this.route.onSameUrlNavigation = 'reload')
+    if (this.route.url.startsWith('/home/details')) {
+      this.activeRoute.queryParams.subscribe((res) => {
+
+        this.route.routeReuseStrategy.shouldReuseRoute = () => false;
+        this.route
+          .navigate(['home/pmg'], {
+            queryParams: { source: res.source, pageIndex:res.pageIndex },
+          })
+          .then(() => (this.route.onSameUrlNavigation = 'reload'));
+      });
+    }
+    if (this.route.url.startsWith('/home/pmg')) {
+        this.route.routeReuseStrategy.shouldReuseRoute = () => false;
+        this.route
+          .navigate(['home'])
+          .then(() => (this.route.onSameUrlNavigation = 'reload'));
     }
   }
   async logout() {

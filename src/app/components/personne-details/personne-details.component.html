@@ -1,31 +1,42 @@
+<div mat-dialog-content>
 <div class="nbrappel" *ngIf="personne.resultatTraitement != 'nouvelle'">
   <p>
-    Nombre appels:
     {{
       personne.nbrappel
     }}
   </p>
 </div>
-<div class="resultatTraitement">
-  <p>
-    {{
-      personne.resultatTraitement === "nouvelle"
-        ? "Nouvelle demande"
-        : personne.resultatTraitement
-    }}
-  </p>
+
+<div class="chats">
+  <div class="resultatTraitement">
+    <p>
+      {{
+        personne.resultatTraitement === "nouvelle"
+          ? "Nouvelle demande"
+          : personne.resultatTraitement
+      }}
+    </p>
+  </div>
+  <div class="resultatTraitement">
+    <p>
+      {{
+        personne.numtiers
+      }}
+    </p>
+  </div>
+  <div class="resultatEvolan" *ngIf="personne.resultatTraitement !== 'nouvelle'">
+    <p>
+      {{
+        personne.personnePhysiqueError?personne.personnePhysiqueError.includes('Numéro de CIN déjà attribué')?personne.motif:personne.personnePhysiqueError:''
+      }}
+    </p>
+  </div>
 </div>
-<div class="resultatEvolan">
-  <p>
-    {{
-      personne.personnePhysiqueError
-    }}
-  </p>
-</div>
+
 <mat-spinner style="margin: 0 auto;"  *ngIf="!isSettingEnded"></mat-spinner>
 
 <form class="form" [formGroup]="form" *ngIf="isSettingEnded">
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Nom</mat-label>
       <input
@@ -44,7 +55,7 @@
     </mat-form-field>
   </div>
 
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Prénom</mat-label>
       <input
@@ -63,7 +74,7 @@
     </mat-form-field>
   </div>
 
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Genre</mat-label>
       <mat-select formControlName="genre">
@@ -76,7 +87,7 @@
     </mat-form-field>
   </div>
 
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Date Naissance</mat-label>
       <input
@@ -92,7 +103,7 @@
       <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
     </mat-form-field>
   </div>
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Situation Familiale</mat-label>
       <mat-select formControlName="situationfamiliale">
@@ -104,7 +115,7 @@
       }}</mat-hint>
     </mat-form-field>
   </div>
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>CIN</mat-label>
       <input
@@ -120,7 +131,7 @@
     </mat-form-field>
   </div>
 
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Date Expiration</mat-label>
       <input
@@ -137,7 +148,7 @@
     </mat-form-field>
   </div>
 
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Adresse</mat-label>
       <input
@@ -155,7 +166,7 @@
       }}</mat-hint>
     </mat-form-field>
   </div>
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Adresse ligne 1</mat-label>
       <input
@@ -170,7 +181,7 @@
       }}</mat-hint> -->
     </mat-form-field>
   </div>
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Adresse ligne 2</mat-label>
       <input
@@ -186,11 +197,10 @@
     </mat-form-field>
   </div>
 
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Ville</mat-label>
       <mat-select  formControlName="ville" (selectionChange)="getcodeagenes()">
-        <mat-option [value]="personne.ville">{{personne.ville}}</mat-option>
         <mat-option *ngFor="let v of villes" [value]="v.ville">
           {{ v.ville }}
         </mat-option>
@@ -210,7 +220,7 @@
     </mat-form-field>
   </div>
 
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Code Postal</mat-label>
       <input
@@ -224,13 +234,12 @@
     </mat-form-field>
   </div>
 
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Agence</mat-label>
       <mat-select formControlName="codeagence">
-        <mat-option [value]="form.value.codeagence">{{form.value.codeagence?personne.agence:'à choisir...'}}</mat-option>
         <mat-option *ngFor="let agence of agences" [value]="agence.codeagence">
-          {{ agence.agence }}
+          {{ agence.agence }} ({{agence.codeagence}})
         </mat-option>
       </mat-select>
       <mat-hint style="color: crimson" *ngIf="isHintCodeAgence">{{
@@ -242,7 +251,7 @@
     </mat-form-field>
   </div>
 
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Tel Domicile</mat-label>
       <input
@@ -255,7 +264,7 @@
       <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
     </mat-form-field>
   </div>
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Tel GSM</mat-label>
       <input
@@ -268,7 +277,7 @@
       <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
     </mat-form-field>
   </div>
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Tel Professionnel</mat-label>
       <input
@@ -281,7 +290,7 @@
       <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
     </mat-form-field>
   </div>
-  <!-- <div>
+  <!-- <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>typeclient</mat-label>
       <input formControlName="typeclient" matInput />
@@ -290,7 +299,7 @@
   </div> -->
 
   <!-- <p>{{personne.action}}</p>
-<div>
+<div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Identifiant</mat-label>
       <input [(ngModel)]="" matInput />
@@ -299,7 +308,7 @@
   </div> -->
 
   <!-- <p>{{personne.autoinsert}}</p>
-<div>
+<div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Identifiant</mat-label>
       <input [(ngModel)]="" matInput />
@@ -307,7 +316,7 @@
     </mat-form-field>
   </div> -->
 
-  <!-- <div>
+  <!-- <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Canal</mat-label>
       <input formControlName="canal" matInput />
@@ -315,7 +324,7 @@
     </mat-form-field>
   </div> -->
 
-  <!-- <div>
+  <!-- <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>codeagencecible</mat-label>
       <input formControlName="codeagencecible" matInput />
@@ -323,7 +332,7 @@
     </mat-form-field>
   </div> -->
 
-  <!-- <div>
+  <!-- <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>codegestionnaire</mat-label>
       <input formControlName="codegestionnaire" matInput />
@@ -331,7 +340,7 @@
     </mat-form-field>
   </div> -->
 
-  <!-- <div>
+  <!-- <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>codeorganisme</mat-label>
       <input formControlName="codeorganisme" matInput />
@@ -340,7 +349,7 @@
   </div> -->
 
   <!-- <p>{{personne.dateinsert}}</p>
-<div>
+<div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>dateinsert</mat-label>
       <input [(ngModel)]="" matInput />
@@ -349,7 +358,7 @@
   </div> -->
 
   <!-- <p>{{personne.erreur}}</p>
-<div>
+<div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Identifiant</mat-label>
       <input [(ngModel)]="" matInput />
@@ -358,7 +367,7 @@
   </div> -->
 
   <!-- <p>{{personne.id}}</p>
-<div>
+<div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Identifiant</mat-label>
       <input [(ngModel)]="" matInput />
@@ -366,7 +375,7 @@
     </mat-form-field>
   </div> -->
   <!-- <p>{{personne.idstatut}}</p>
-<div>
+<div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Identifiant</mat-label>
       <input [(ngModel)]="" matInput />
@@ -374,7 +383,7 @@
     </mat-form-field>
   </div> -->
 
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Montant Demandé</mat-label>
       <input
@@ -388,7 +397,7 @@
     </mat-form-field>
   </div>
 
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Nombre d'échéances</mat-label>
       <input
@@ -402,7 +411,7 @@
     </mat-form-field>
   </div>
 
-   <!-- <div>
+   <!-- <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Niveau Formalisme</mat-label>
       <input formControlName="niveauformalisme" matInput />
@@ -410,28 +419,28 @@
     </mat-form-field>
   </div>  -->
 
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Produit</mat-label>
       <input formControlName="produit" matInput />
       <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
     </mat-form-field>
   </div>
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Secteur</mat-label>
       <input formControlName="secteur" matInput />
       <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
     </mat-form-field>
   </div>
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Projet</mat-label>
       <input formControlName="projet" matInput />
       <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
     </mat-form-field>
   </div>
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Email</mat-label>
       <input formControlName="email" matInput />
@@ -439,7 +448,7 @@
     </mat-form-field>
   </div>
 
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Numéro RIB</mat-label>
       <input
@@ -453,7 +462,7 @@
     </mat-form-field>
   </div>
   <!-- <p>{{personne.numtiers}}</p>
-<div>
+<div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>numtiers</mat-label>
       <input [(ngModel)]="" matInput />
@@ -461,7 +470,7 @@
     </mat-form-field>
   </div> -->
 
-  <!-- <div>
+  <!-- <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Quartier</mat-label>
       <input formControlName="quartier" matInput />
@@ -469,7 +478,7 @@
     </mat-form-field>
   </div> -->
 
-  <!-- <div>
+  <!-- <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>rue</mat-label>
       <input formControlName="rue" matInput />
@@ -478,7 +487,7 @@
   </div> -->
 
   <!-- <p>{{personne.source}}</p>
-<div>
+<div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Identifiant</mat-label>
       <input [(ngModel)]="" matInput />
@@ -486,10 +495,10 @@
     </mat-form-field>
   </div> -->
 
-  <div>
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Statut de Traitement</mat-label>
-      <mat-select formControlName="statutTraitement">
+      <mat-select [disabled]="isCIntressed" formControlName="statutTraitement">
         <mat-option
           *ngFor="let status of statusTraitement"
           [value]="status.statut"
@@ -502,8 +511,35 @@
       }}</mat-hint>
     </mat-form-field>
   </div>
+  <div  *ngIf="isIntressed || isCIntressed" style="margin: 15px auto;">
+    <mat-form-field  appearance="fill">
+      <mat-label>Qualification</mat-label>
+      <mat-select  formControlName="qualification">
+        <mat-option
+          *ngFor="let status of qualification"
+          [value]="status.statut"
+        >
+          {{ status.statut }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
 
-  <div>
+  <div *ngIf="isPretDeb" style="margin: 15px auto;">
+    <mat-form-field  appearance="fill">
+      <mat-label>Montant Débloqué</mat-label>
+      <input
+        type="number"
+        max="50000"
+        min="0"
+        formControlName="montantdebloque"
+        matInput
+      />
+      <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+    </mat-form-field>
+  </div>
+
+  <div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Date Rendez-Vous</mat-label>
       <input
@@ -520,7 +556,7 @@
     </mat-form-field>
   </div>
   <!-- <p>{{personne.typeenregistrement}}</p>
-<div>
+<div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Identifiant</mat-label>
       <input [(ngModel)]="" matInput />
@@ -528,7 +564,7 @@
     </mat-form-field>
   </div> -->
   <!-- <p>{{personne.valeurid}}</p>
-<div>
+<div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Identifiant</mat-label>
       <input [(ngModel)]="" matInput />
@@ -537,7 +573,7 @@
   </div> -->
 
   <!-- <p>{{personne.personneMoraleGarantError}}</p>
-<div>
+<div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Identifiant</mat-label>
       <input [(ngModel)]="" matInput />
@@ -545,7 +581,7 @@
     </mat-form-field>
   </div> -->
   <!-- <p>{{personne.personneMoraleError}}</p>
-<div>
+<div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Identifiant</mat-label>
       <input [(ngModel)]="" matInput />
@@ -553,7 +589,7 @@
     </mat-form-field>
   </div> -->
   <!-- <p>{{personne.personnePhysiqueError}}</p>
-<div>
+<div style="margin: 15px auto;">
     <mat-form-field appearance="fill">
       <mat-label>Identifiant</mat-label>
       <input [(ngModel)]="" matInput />
@@ -579,7 +615,7 @@
     <button *ngIf="personne.resultatTraitement !='nouvelle'" (click)="sendToEvolan(personne)" mat-raised-button >
         Envoyer à  Evolan
     </button> -->
-    <br>
+    <!-- <br>
   <button
     [disabled]="form.invalid && statusTraitement === 'Intéressé'"
     (click)="sendToEvolan()"
@@ -587,11 +623,50 @@
     color="warn"
   >
     Valider
+  </button> -->
+
+  <!-- <button (click)="openDialogResultatTraitement(personne.valeurid)" mat-raised-button >
+       Resultat Traitement
+    </button> -->
+<!-- 
+  <a mat-raised-button [href]="url">Appeler</a> -->
+</div>
+</form>
+</div>
+<div mat-dialog-actions>
+  <button
+  (click)="onNoClick('')"
+  mat-raised-button
+  color="warn"
+>
+<mat-icon style="position: relative;margin-left: 10px;
+                bottom: 10px;
+                right: 20px;" matPrefix><img src="../../../assets/undo.png" alt="account icon"></mat-icon>
+  Retour
+</button>
+  <button
+    (click)="sendToEvolan()"
+    mat-raised-button
+    color="primary"
+  >
+  <mat-icon style="position: relative;margin-left: 10px;
+                bottom: 10px;
+                right: 20px;" matPrefix><img src="../../../assets/valider.png" alt="account icon"></mat-icon>
+    Valider
   </button>
+  
   <!-- <button (click)="openDialogResultatTraitement(personne.valeurid)" mat-raised-button >
        Resultat Traitement
     </button> -->
 
-  <a mat-raised-button [href]="url">Appeler</a>
+  <a mat-raised-button [href]="url">
+    <mat-icon style="position: relative;margin-left: 10px;
+                bottom: 10px;
+                right: 20px;" matPrefix><img src="../../../assets/call.png" alt="account icon"></mat-icon>
+                Appeler Client</a>
+                <a *ngIf="personne.resultatTraitement !== 'nouvelle'" mat-raised-button [href]="urlca">
+                  <mat-icon style="position: relative;margin-left: 10px;
+                              bottom: 10px;
+                              right: 20px;" matPrefix><img src="../../../assets/call.png" alt="account icon"></mat-icon>
+                              Appeler CA : {{personne.gsmca}}</a>
 </div>
-</form>

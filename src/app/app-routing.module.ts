@@ -2,26 +2,20 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
-import { PersonneMoraleComponent } from './components/personne-morale/personne-morale.component';
-import { PersonnePhysiqueComponent } from './components/personne-physique/personne-physique.component';
 import { RegisterComponent } from './pages/register/register.component';
-import { PersonnePhysiqueGestionnaireComponent } from './components/personne-physique-gestionnaire/personne-physique-gestionnaire.component';
 import { PersonneMoraleGestionnaireComponent } from './components/personne-morale-gestionnaire/personne-morale-gestionnaire.component';
-import { PpDataService } from './services/ppdata.service';
 import { PersonneDetailsComponent } from './components/personne-details/personne-details.component';
 import { AgenceDataService } from './services/agenceData.service';
 import { PmDataService } from './services/pmData.service';
-import { PmDataNewService } from './services/pmDataNew.service';
 import { AuthGuard } from './services/auth.guard';
 import { NotAuthGuard } from './services/not-auth.guard';
+import { AgentsPageComponent } from './components/agents-page/agents-page.component';
+import { DrPageComponent } from './components/dr-page/dr-page.component';
+import { DsPageComponent } from './components/ds-page/ds-page.component';
+
 const role = localStorage.getItem('role');
 console.log('routing', role, role === 'BO');
 const routes: Routes = [
-  {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: 'login',
-  },
   {
     path: 'login',
     component: LoginComponent,
@@ -33,37 +27,20 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     children: [
       {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'pmg',
-      },
-      {
-        path: 'pm',
-        component: PersonneMoraleComponent,
-        runGuardsAndResolvers: 'always'
-      },
-      {
-        path: 'pp',
-        component: PersonnePhysiqueComponent,
-        runGuardsAndResolvers: 'always'
-      },
-      {
-        path: 'ppg',
-        component: PersonnePhysiqueGestionnaireComponent,
-        resolve: { pps: PpDataService, agences: AgenceDataService, ppsn:PmDataNewService },
-        runGuardsAndResolvers: 'always'
-      },
-      {
         path: 'pmg',
         component: PersonneMoraleGestionnaireComponent,
-        resolve: { codes: PmDataService},
+        resolve: { codes: PmDataService,villes: AgenceDataService},
         runGuardsAndResolvers: 'always'
       },
       {
         path: 'details',
         component: PersonneDetailsComponent,
-        resolve: { villes: AgenceDataService},
         runGuardsAndResolvers: 'always'
+      },
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'pmg',
       },
     ],
     canActivate: [AuthGuard],
@@ -71,6 +48,26 @@ const routes: Routes = [
   {
     path: 'register',
     component: RegisterComponent,
+  },
+  {
+    path: 'agence/:codeagence',
+    component: AgentsPageComponent,
+    resolve:{villes: AgenceDataService}
+  },
+  {
+    path: 'ds/:codedr',
+    component: DsPageComponent,
+    resolve:{villes: AgenceDataService}
+  },
+  {
+    path: 'dr/:codeds',
+    component: DrPageComponent,
+    resolve:{villes: AgenceDataService}
+  },
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'login',
   },
 ];
 

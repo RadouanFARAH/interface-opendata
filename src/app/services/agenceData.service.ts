@@ -9,6 +9,6 @@ import { Observable } from 'rxjs';
 export class AgenceDataService implements Resolve<Object>{
   constructor(private http:HttpClient) { }
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): any[] | Observable<Object> | Promise<any[]> {
-    return this.http.get('https://192.168.140.30:3132/api/getListVilles')
+    return this.http.get('https://intranet.alamana.org.ma:3132/api/getListVilles')
   }
 }
