@@ -1,672 +1,506 @@
 <div mat-dialog-content>
-<div class="nbrappel" *ngIf="personne.resultatTraitement != 'nouvelle'">
-  <p>
-    {{
+  <div class="nbrappel" *ngIf="personne.resultatTraitement != 'nouvelle'">
+    <p>
+      {{
       personne.nbrappel
-    }}
-  </p>
-</div>
-
-<div class="chats">
-  <div class="resultatTraitement">
-    <p>
-      {{
+      }}
+    </p>
+  </div>
+  <div class="chats">
+    <div class="resultatTraitement">
+      <p>
+        {{
         personne.resultatTraitement === "nouvelle"
-          ? "Nouvelle demande"
-          : personne.resultatTraitement
-      }}
-    </p>
-  </div>
-  <div class="resultatTraitement">
-    <p>
-      {{
+        ? "Nouvelle demande"
+        : personne.resultatTraitement
+        }}
+        [{{personne.typeclient}}]
+      </p>
+    </div>
+    <div class="resultatTraitement">
+      <p>
+        {{
         personne.numtiers
-      }}
-    </p>
+        }}
+      </p>
+    </div>
+    <div class="resultatEvolan" *ngIf="personne.resultatTraitement !== 'nouvelle'">
+      <p>
+        {{
+        personne.statuttraitement === "Demande rejetée" ? personne.motif:""
+        }}
+      </p>
+    </div>
   </div>
-  <div class="resultatEvolan" *ngIf="personne.resultatTraitement !== 'nouvelle'">
-    <p>
-      {{
-        personne.personnePhysiqueError?personne.personnePhysiqueError.includes('Numéro de CIN déjà attribué')?personne.motif:personne.personnePhysiqueError:''
-      }}
-    </p>
-  </div>
+
+  <mat-spinner style="margin: 0 auto;" *ngIf="!isSettingEnded"></mat-spinner>
+
+  <form class="form" [formGroup]="form" *ngIf="isSettingEnded">
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>TypeClient</mat-label>
+        <mat-select formControlName="typeclient" (selectionChange)="personne.typeclient = form.value.typeclient">
+          <mat-option value="M"> Personne Morale</mat-option>
+          <mat-option value="P"> Personne Physique </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Nom {{personne.typeclient=="M"?'(Gérant)':''}}</mat-label>
+        <input type="text" maxlength="32" minlength="3" formControlName="nom" matInput />
+        <mat-hint style="color: crimson" *ngIf="isHintNom">{{
+          HintNom
+          }}</mat-hint>
+        <mat-hint style="color: crimson" *ngIf="isHintNomAR">{{
+          HintNomAR
+          }}</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Prénom {{personne.typeclient=="M"?'(Gérant)':''}}</mat-label>
+        <input type="text" maxlength="32" minlength="3" formControlName="prenom" matInput />
+        <mat-hint style="color: crimson" *ngIf="isHintPrenom">{{
+          HintPrenom
+          }}</mat-hint>
+        <mat-hint style="color: crimson" *ngIf="isHintPrenomAR">{{
+          HintPrenomAR
+          }}</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Genre {{personne.typeclient=="M"?'(Gérant)':''}}</mat-label>
+        <mat-select formControlName="genre">
+          <mat-option value="M."> Monsieur </mat-option>
+          <mat-option value="MME"> Madame </mat-option>
+        </mat-select>
+        <mat-hint style="color: crimson" *ngIf="isHintGenre">{{
+          HintGenre
+          }}</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Date Naissance {{personne.typeclient=="M"?'(Gérant)':''}}</mat-label>
+        <input formControlName="datenaissance" matInput [matDatepicker]="datenaisscepicker" />
+        <mat-datepicker-toggle matSuffix [for]="datenaisscepicker"></mat-datepicker-toggle>
+        <mat-datepicker #datenaisscepicker></mat-datepicker>
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Situation Familiale {{personne.typeclient=="M"?'(Gérant)':''}}</mat-label>
+        <mat-select formControlName="situationfamiliale">
+          <mat-option value="M"> Marié </mat-option>
+          <mat-option value="C"> Célibataire </mat-option>
+        </mat-select>
+        <mat-hint style="color: crimson" *ngIf="isHintSituationFamiliale">{{
+          HintSituationFamiliale
+          }}</mat-hint>
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>CIN {{personne.typeclient=="M"?'(Gérant)':''}}</mat-label>
+        <input type="text" maxlength="15" minlength="3" formControlName="cin" matInput />
+        <mat-hint style="color: crimson" *ngIf="isHintCIN">{{
+          HintCIN
+          }}</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Date Expiration CIN {{personne.typeclient=="M"?'(Gérant)':''}}</mat-label>
+        <input formControlName="dateexpiration" matInput [matDatepicker]="dateexpirationpicker" />
+        <mat-datepicker-toggle matSuffix [for]="dateexpirationpicker"></mat-datepicker-toggle>
+        <mat-datepicker #dateexpirationpicker></mat-datepicker>
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Adresse {{personne.typeclient=="M"?'(Gérant)':''}}</mat-label>
+        <input type="text" maxlength="32" minlength="3" formControlName="adresse" matInput />
+        <mat-hint style="color: crimson" *ngIf="isHintAdresse">{{
+          HintAdresse
+          }}</mat-hint>
+        <mat-hint style="color: crimson" *ngIf="isHintAdresseAR">{{
+          HintAdresseAR
+          }}</mat-hint>
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Adresse ligne 1 {{personne.typeclient=="M"?'(Gérant)':''}}</mat-label>
+        <input type="text" maxlength="32" minlength="3" formControlName="rue" matInput />
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Adresse ligne 2 {{personne.typeclient=="M"?'(Gérant)':''}}</mat-label>
+        <input type="text" maxlength="32" minlength="3" formControlName="quartier" matInput />
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Ville {{personne.typeclient=="M"?'(Gérant)':''}}</mat-label>
+        <mat-select formControlName="ville" (selectionChange)="getcodeagenes()">
+          <mat-option *ngFor="let v of villes" [value]="v.ville">
+            {{ v.ville }}
+          </mat-option>
+        </mat-select>
+        <mat-hint type="text" style="color: crimson" *ngIf="isHintVille">{{ HintVille }}</mat-hint>
+        <mat-hint type="text" style="color: crimson" *ngIf="isHintVilleAR">{{ HintVilleAR }}</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Code Postal {{personne.typeclient=="M"?'(Gérant)':''}}</mat-label>
+        <input type="text" maxlength="5" minlength="5" formControlName="codepostal" matInput />
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Agence </mat-label>
+        <mat-select formControlName="codeagence">
+          <mat-option *ngFor="let agence of agences" [value]="agence.codeagence">
+            {{ agence.agence }} ({{agence.codeagence}})
+          </mat-option>
+        </mat-select>
+        <mat-hint style="color: crimson" *ngIf="isHintCodeAgence">{{
+          HintCodeAgence
+          }}</mat-hint>
+        <mat-hint style="color: crimson" *ngIf="isHintCodeAgenceAR">{{
+          HintCodeAgenceAR
+          }}</mat-hint>
+      </mat-form-field>
+      <!-- <mat-form-field appearance="fill">
+        <mat-label>Adresse Agence</mat-label>
+        <input type="text"disabled matInput value="adresse agence" />
+      </mat-form-field> -->
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Tel Domicile</mat-label>
+        <input type="text" maxlength="10" minlength="10" formControlName="teldomicile" matInput />
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Tel GSM</mat-label>
+        <input type="text" maxlength="10" minlength="10" formControlName="telgsm" matInput />
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Tel Professionnel</mat-label>
+        <input type="text" maxlength="10" minlength="10" formControlName="telprofessionnel" matInput />
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Montant Demandé</mat-label>
+        <input type="number" max="50000" min="0" formControlName="montantdemande" matInput />
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Nombre d'échéances</mat-label>
+        <input type="number" max="24" min="1" formControlName="nombreecheance" matInput />
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Produit</mat-label>
+        <input formControlName="produit" matInput />
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Secteur</mat-label>
+        <input formControlName="secteur" matInput />
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Projet</mat-label>
+        <input formControlName="projet" matInput />
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input formControlName="email" matInput />
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Numéro RIB</mat-label>
+        <input type="text" minlength="24" maxlength="24" formControlName="numrib" matInput />
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Résultat de Traitement</mat-label>
+        <mat-select [disabled]="isCIntressed" formControlName="resultatTraitement">
+          <mat-option *ngFor="let status of statusTraitement" [value]="status.statut">
+            {{ status.statut }}
+          </mat-option>
+        </mat-select>
+        <mat-hint style="color: crimson" *ngIf="isHintStatutTraitement">{{
+          HintStatutTraitement
+          }}</mat-hint>
+      </mat-form-field>
+    </div>
+    <div *ngIf="isIntressed || isCIntressed" style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Qualification</mat-label>
+        <mat-select formControlName="qualification">
+          <mat-option *ngFor="let status of qualification" [value]="status.statut">
+            {{ status.statut }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div *ngIf="isPretDeb" style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Montant Débloqué</mat-label>
+        <input type="number" max="50000" min="0" formControlName="montantdebloque" matInput />
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-form-field appearance="fill">
+        <mat-label>Date Rendez-Vous</mat-label>
+        <input formControlName="daterendezvous" matInput [matDatepicker]="daterendezvouspicker" />
+        <mat-datepicker-toggle matSuffix [for]="daterendezvouspicker"></mat-datepicker-toggle>
+        <mat-datepicker #daterendezvouspicker></mat-datepicker>
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;" *ngIf="personne.typeclient=='M'">
+      <mat-form-field appearance="fill">
+        <mat-label>ICE</mat-label>
+        <input formControlName="ice" matInput />
+        <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;" *ngIf="personne.typeclient=='M'">
+      <mat-form-field appearance="fill">
+        <mat-label>RC</mat-label>
+        <input formControlName="rcommerce" matInput />
+        <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;" *ngIf="personne.typeclient=='M'">
+      <mat-form-field appearance="fill">
+        <mat-label>Raison Social</mat-label>
+        <input formControlName="raisonsociale" matInput />
+        <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;" *ngIf="personne.typeclient=='M'">
+      <mat-form-field appearance="fill">
+        <mat-label>Raison Social Suite</mat-label>
+        <input formControlName="raisonsocialesuite" matInput />
+        <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;" *ngIf="personne.typeclient=='M'">
+      <mat-form-field appearance="fill">
+        <mat-label>N° Fiscal</mat-label>
+        <input formControlName="nifiscale" matInput />
+        <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;" *ngIf="personne.typeclient=='M'">
+      <mat-form-field appearance="fill">
+        <mat-label>N° Pattente</mat-label>
+        <input formControlName="numpattente" matInput />
+        <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;" *ngIf="personne.typeclient=='M'">
+      <mat-form-field appearance="fill">
+        <mat-label>Date Création (Entreprise)</mat-label>
+        <input formControlName="datecreation" matInput [matDatepicker]="datecreationpicker" />
+        <mat-datepicker-toggle matSuffix [for]="datecreationpicker"></mat-datepicker-toggle>
+        <mat-datepicker #datecreationpicker></mat-datepicker>
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;" *ngIf="personne.typeclient=='M'">
+      <mat-form-field appearance="fill">
+        <mat-label>Adresse (Entreprise)</mat-label>
+        <input type="text" maxlength="32" minlength="3" formControlName="adresseentreprise" matInput />
+        <mat-hint style="color: crimson" *ngIf="isHintAdresse">{{
+          HintAdresse
+          }}</mat-hint>
+        <mat-hint style="color: crimson" *ngIf="isHintAdresseAR">{{
+          HintAdresseAR
+          }}</mat-hint>
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;" *ngIf="personne.typeclient=='M'">
+      <mat-form-field appearance="fill">
+        <mat-label>Adresse ligne 1 (Entreprise)</mat-label>
+        <input type="text" maxlength="32" minlength="3" formControlName="rueentreprise" matInput />
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;" *ngIf="personne.typeclient=='M'">
+      <mat-form-field appearance="fill">
+        <mat-label>Adresse ligne 2 (Entreprise)</mat-label>
+        <input type="text" maxlength="32" minlength="3" formControlName="quartierentreprise" matInput />
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;" *ngIf="personne.typeclient=='M'">
+      <mat-form-field appearance="fill">
+        <mat-label>Ville (Entreprise)</mat-label>
+        <mat-select formControlName="villeentreprise" (selectionChange)="getcodeagenes()">
+          <mat-option *ngFor="let v of villes" [value]="v.ville">
+            {{ v.ville }}
+          </mat-option>
+        </mat-select>
+        <mat-hint type="text" style="color: crimson" *ngIf="isHintVille">{{ HintVille }}</mat-hint>
+        <mat-hint type="text" style="color: crimson" *ngIf="isHintVilleAR">{{ HintVilleAR }}</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;" *ngIf="personne.typeclient=='M'">
+      <mat-form-field appearance="fill">
+        <mat-label>Code Postal (Entreprise)</mat-label>
+        <input type="text" maxlength="5" minlength="5" formControlName="codepostaleentreprise" matInput />
+        <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;" *ngIf="personne.typeclient=='M'">
+      <mat-form-field appearance="fill">
+        <mat-label>Niveau Formalisme</mat-label>
+        <mat-select formControlName="niveauformalisme">
+          <mat-option *ngFor="let niveau of niveaux" [value]="niveau.code">
+            {{niveau.titre}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div style="margin: 15px auto;" *ngIf="personne.typeclient=='M'">
+      <mat-form-field appearance="fill">
+        <mat-label>Forme Juridique</mat-label>
+        <mat-select formControlName="formejuridique">
+          <mat-option *ngFor="let formejuridique of formejuridiques" [value]="formejuridique.code">
+            {{formejuridique.titre}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div style="margin: 15px auto;">
+      <mat-checkbox formControlName="sendMe">Notification Agence!</mat-checkbox>
+    </div>
+    <div class="buttons">
+    </div>
+  </form>
+<div style="display: flex;
+justify-content: center;flex-direction: column;" *ngIf="form.value">
+<h1 style="margin: 20px; text-align: center;">Historique des qualifications : </h1>
+<hr>
+  <table mat-table [dataSource]="history" matTableExporter #exporter="matTableExporter" class="mat-elevation-z8"
+    matSort>
+    <ng-container matColumnDef="valeurid">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+      <td mat-cell *matCellDef="let element">{{ element.valeurid }}</td>
+    </ng-container>
+    <ng-container matColumnDef="resultatTraitement">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Résultat du Traitement</th>
+      <td mat-cell *matCellDef="let element">{{ element.resultatTraitement }}</td>
+    </ng-container>
+    <ng-container matColumnDef="user">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Traitement Initial par</th>
+      <td mat-cell *matCellDef="let element">{{ element.user }}</td>
+    </ng-container>
+    <ng-container matColumnDef="codegestionnairecible">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Dernier Traitement par</th>
+      <td mat-cell *matCellDef="let element">{{ element.codegestionnairecible }}</td>
+    </ng-container>
+    <ng-container matColumnDef="entry_date">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date Dernier Traitement</th>
+      <td mat-cell *matCellDef="let element">{{ element.entry_date }}</td>
+    </ng-container>
+    <ng-container matColumnDef="qualification">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Qualification</th>
+      <td mat-cell *matCellDef="let element">{{ element.qualification }}</td>
+    </ng-container>
+    <ng-container matColumnDef="statuttraitement">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Statut Contrat</th>
+      <td mat-cell *matCellDef="let element">{{ element.statuttraitement }}</td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="historyDisplayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: historyDisplayedColumns"
+    ></tr>
+  </table>
 </div>
 
-<mat-spinner style="margin: 0 auto;"  *ngIf="!isSettingEnded"></mat-spinner>
-
-<form class="form" [formGroup]="form" *ngIf="isSettingEnded">
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Nom</mat-label>
-      <input
-        type="text"
-        maxlength="32"
-        minlength="3"
-        formControlName="nom"
-        matInput
-      />
-      <mat-hint style="color: crimson" *ngIf="isHintNom">{{
-        HintNom
-      }}</mat-hint>
-      <mat-hint style="color: crimson" *ngIf="isHintNomAR">{{
-        HintNomAR
-      }}</mat-hint>
-    </mat-form-field>
-  </div>
-
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Prénom</mat-label>
-      <input
-        type="text"
-        maxlength="32"
-        minlength="3"
-        formControlName="prenom"
-        matInput
-      />
-      <mat-hint style="color: crimson" *ngIf="isHintPrenom">{{
-        HintPrenom
-      }}</mat-hint>
-      <mat-hint style="color: crimson" *ngIf="isHintPrenomAR">{{
-        HintPrenomAR
-      }}</mat-hint>
-    </mat-form-field>
-  </div>
-
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Genre</mat-label>
-      <mat-select formControlName="genre">
-        <mat-option value="M."> Monsieur </mat-option>
-        <mat-option value="MME"> Madame </mat-option>
-      </mat-select>
-      <mat-hint style="color: crimson" *ngIf="isHintGenre">{{
-        HintGenre
-      }}</mat-hint>
-    </mat-form-field>
-  </div>
-
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Date Naissance</mat-label>
-      <input
-        formControlName="datenaissance"
-        matInput
-        [matDatepicker]="datenaisscepicker"
-      />
-      <mat-datepicker-toggle
-        matSuffix
-        [for]="datenaisscepicker"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #datenaisscepicker></mat-datepicker>
-      <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div>
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Situation Familiale</mat-label>
-      <mat-select formControlName="situationfamiliale">
-        <mat-option value="M"> Marié </mat-option>
-        <mat-option value="C"> Célibataire </mat-option>
-      </mat-select>
-      <mat-hint style="color: crimson" *ngIf="isHintSituationFamiliale">{{
-        HintSituationFamiliale
-      }}</mat-hint>
-    </mat-form-field>
-  </div>
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>CIN</mat-label>
-      <input
-        type="text"
-        maxlength="15"
-        minlength="3"
-        formControlName="cin"
-        matInput
-      />
-      <mat-hint style="color: crimson" *ngIf="isHintCIN">{{
-        HintCIN
-      }}</mat-hint>
-    </mat-form-field>
-  </div>
-
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Date Expiration</mat-label>
-      <input
-        formControlName="dateexpiration"
-        matInput
-        [matDatepicker]="dateexpirationpicker"
-      />
-      <mat-datepicker-toggle
-        matSuffix
-        [for]="dateexpirationpicker"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #dateexpirationpicker></mat-datepicker>
-      <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div>
-
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Adresse</mat-label>
-      <input
-        type="text"
-        maxlength="32"
-        minlength="3"
-        formControlName="adresse"
-        matInput
-      />
-      <mat-hint style="color: crimson" *ngIf="isHintAdresse">{{
-        HintAdresse
-      }}</mat-hint>
-      <mat-hint style="color: crimson" *ngIf="isHintAdresseAR">{{
-        HintAdresseAR
-      }}</mat-hint>
-    </mat-form-field>
-  </div>
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Adresse ligne 1</mat-label>
-      <input
-        type="text"
-        maxlength="32"
-        minlength="3"
-        formControlName="rue"
-        matInput
-      />
-      <!-- <mat-hint style="color: crimson" *ngIf="isHintAdresse">{{
-        HintAdresse
-      }}</mat-hint> -->
-    </mat-form-field>
-  </div>
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Adresse ligne 2</mat-label>
-      <input
-        type="text"
-        maxlength="32"
-        minlength="3"
-        formControlName="quartier"
-        matInput
-      />
-      <!-- <mat-hint style="color: crimson" *ngIf="isHintAdresse">{{
-        HintAdresse
-      }}</mat-hint> -->
-    </mat-form-field>
-  </div>
-
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Ville</mat-label>
-      <mat-select  formControlName="ville" (selectionChange)="getcodeagenes()">
-        <mat-option *ngFor="let v of villes" [value]="v.ville">
-          {{ v.ville }}
-        </mat-option>
-      </mat-select>
-      <mat-hint
-        type="text"
-        style="color: crimson"
-        *ngIf="isHintVille"
-        >{{ HintVille }}</mat-hint
-      >
-      <mat-hint
-      type="text"
-      style="color: crimson"
-      *ngIf="isHintVilleAR"
-      >{{ HintVilleAR }}</mat-hint
-    >
-    </mat-form-field>
-  </div>
-
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Code Postal</mat-label>
-      <input
-        type="text"
-        maxlength="5"
-        minlength="5"
-        formControlName="codepostal"
-        matInput
-      />
-      <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div>
-
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Agence</mat-label>
-      <mat-select formControlName="codeagence">
-        <mat-option *ngFor="let agence of agences" [value]="agence.codeagence">
-          {{ agence.agence }} ({{agence.codeagence}})
-        </mat-option>
-      </mat-select>
-      <mat-hint style="color: crimson" *ngIf="isHintCodeAgence">{{
-        HintCodeAgence
-      }}</mat-hint>
-      <mat-hint style="color: crimson" *ngIf="isHintCodeAgenceAR">{{
-        HintCodeAgenceAR
-      }}</mat-hint>
-    </mat-form-field>
-  </div>
-
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Tel Domicile</mat-label>
-      <input
-        type="text"
-        maxlength="10"
-        minlength="10"
-        formControlName="teldomicile"
-        matInput
-      />
-      <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div>
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Tel GSM</mat-label>
-      <input
-        type="text"
-        maxlength="10"
-        minlength="10"
-        formControlName="telgsm"
-        matInput
-      />
-      <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div>
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Tel Professionnel</mat-label>
-      <input
-        type="text"
-        maxlength="10"
-        minlength="10"
-        formControlName="telprofessionnel"
-        matInput
-      />
-      <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div>
-  <!-- <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>typeclient</mat-label>
-      <input formControlName="typeclient" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-
-  <!-- <p>{{personne.action}}</p>
-<div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Identifiant</mat-label>
-      <input [(ngModel)]="" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-
-  <!-- <p>{{personne.autoinsert}}</p>
-<div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Identifiant</mat-label>
-      <input [(ngModel)]="" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-
-  <!-- <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Canal</mat-label>
-      <input formControlName="canal" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-
-  <!-- <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>codeagencecible</mat-label>
-      <input formControlName="codeagencecible" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-
-  <!-- <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>codegestionnaire</mat-label>
-      <input formControlName="codegestionnaire" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-
-  <!-- <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>codeorganisme</mat-label>
-      <input formControlName="codeorganisme" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-
-  <!-- <p>{{personne.dateinsert}}</p>
-<div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>dateinsert</mat-label>
-      <input [(ngModel)]="" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-
-  <!-- <p>{{personne.erreur}}</p>
-<div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Identifiant</mat-label>
-      <input [(ngModel)]="" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-
-  <!-- <p>{{personne.id}}</p>
-<div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Identifiant</mat-label>
-      <input [(ngModel)]="" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-  <!-- <p>{{personne.idstatut}}</p>
-<div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Identifiant</mat-label>
-      <input [(ngModel)]="" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Montant Demandé</mat-label>
-      <input
-        type="number"
-        max="50000"
-        min="0"
-        formControlName="montantdemande"
-        matInput
-      />
-      <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div>
-
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Nombre d'échéances</mat-label>
-      <input
-        type="number"
-        max="24"
-        min="1"
-        formControlName="nombreecheance"
-        matInput
-      />
-      <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div>
-
-   <!-- <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Niveau Formalisme</mat-label>
-      <input formControlName="niveauformalisme" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div>  -->
-
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Produit</mat-label>
-      <input formControlName="produit" matInput />
-      <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div>
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Secteur</mat-label>
-      <input formControlName="secteur" matInput />
-      <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div>
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Projet</mat-label>
-      <input formControlName="projet" matInput />
-      <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div>
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Email</mat-label>
-      <input formControlName="email" matInput />
-      <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div>
-
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Numéro RIB</mat-label>
-      <input
-        type="text"
-        minlength="24"
-        maxlength="24"
-        formControlName="numrib"
-        matInput
-      />
-      <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div>
-  <!-- <p>{{personne.numtiers}}</p>
-<div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>numtiers</mat-label>
-      <input [(ngModel)]="" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-
-  <!-- <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Quartier</mat-label>
-      <input formControlName="quartier" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-
-  <!-- <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>rue</mat-label>
-      <input formControlName="rue" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-
-  <!-- <p>{{personne.source}}</p>
-<div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Identifiant</mat-label>
-      <input [(ngModel)]="" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Statut de Traitement</mat-label>
-      <mat-select [disabled]="isCIntressed" formControlName="statutTraitement">
-        <mat-option
-          *ngFor="let status of statusTraitement"
-          [value]="status.statut"
-        >
-          {{ status.statut }}
-        </mat-option>
-      </mat-select>
-      <mat-hint style="color: crimson" *ngIf="isHintStatutTraitement">{{
-        HintStatutTraitement
-      }}</mat-hint>
-    </mat-form-field>
-  </div>
-  <div  *ngIf="isIntressed || isCIntressed" style="margin: 15px auto;">
-    <mat-form-field  appearance="fill">
-      <mat-label>Qualification</mat-label>
-      <mat-select  formControlName="qualification">
-        <mat-option
-          *ngFor="let status of qualification"
-          [value]="status.statut"
-        >
-          {{ status.statut }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-
-  <div *ngIf="isPretDeb" style="margin: 15px auto;">
-    <mat-form-field  appearance="fill">
-      <mat-label>Montant Débloqué</mat-label>
-      <input
-        type="number"
-        max="50000"
-        min="0"
-        formControlName="montantdebloque"
-        matInput
-      />
-      <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div>
-
-  <div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Date Rendez-Vous</mat-label>
-      <input
-        formControlName="daterendezvous"
-        matInput
-        [matDatepicker]="daterendezvouspicker"
-      />
-      <mat-datepicker-toggle
-        matSuffix
-        [for]="daterendezvouspicker"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #daterendezvouspicker></mat-datepicker>
-      <mat-hint style="color: crimson" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div>
-  <!-- <p>{{personne.typeenregistrement}}</p>
-<div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Identifiant</mat-label>
-      <input [(ngModel)]="" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-  <!-- <p>{{personne.valeurid}}</p>
-<div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Identifiant</mat-label>
-      <input [(ngModel)]="" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-
-  <!-- <p>{{personne.personneMoraleGarantError}}</p>
-<div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Identifiant</mat-label>
-      <input [(ngModel)]="" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-  <!-- <p>{{personne.personneMoraleError}}</p>
-<div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Identifiant</mat-label>
-      <input [(ngModel)]="" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-  <!-- <p>{{personne.personnePhysiqueError}}</p>
-<div style="margin: 15px auto;">
-    <mat-form-field appearance="fill">
-      <mat-label>Identifiant</mat-label>
-      <input [(ngModel)]="" matInput />
-      <mat-hint style="color: crimson;" *ngIf="false">Hint</mat-hint>
-    </mat-form-field>
-  </div> -->
-  <!--
-<ul *ngFor="let log of logs">
-    <li>{{log.champ + log.annomalie}}</li>
-</ul>
--->
-<div class="buttons">
-  <!-- <button (click)="openDialog(personne.valeurid)" mat-raised-button >
-        Affecter Agence
-    </button> -->
-  <!-- <button *ngIf="personne.resultatTraitement !='nouvelle'" (click)="openDialogSecond(personne.valeurid)" mat-raised-button >
-      Affecter Agent
-    </button>
-    <button *ngIf="personne.resultatTraitement !='nouvelle'" (click)="getStatut(personne.numtiers, personne.codegestionnaire)"
-        mat-raised-button >
-         Statut Demande
-    </button>
-    <button *ngIf="personne.resultatTraitement !='nouvelle'" (click)="sendToEvolan(personne)" mat-raised-button >
-        Envoyer à  Evolan
-    </button> -->
-    <!-- <br>
-  <button
-    [disabled]="form.invalid && statusTraitement === 'Intéressé'"
-    (click)="sendToEvolan()"
-    mat-raised-button
-    color="warn"
-  >
-    Valider
-  </button> -->
-
-  <!-- <button (click)="openDialogResultatTraitement(personne.valeurid)" mat-raised-button >
-       Resultat Traitement
-    </button> -->
-<!-- 
-  <a mat-raised-button [href]="url">Appeler</a> -->
-</div>
-</form>
 </div>
 <div mat-dialog-actions>
-  <button
-  (click)="onNoClick('')"
-  mat-raised-button
-  color="warn"
->
-<mat-icon style="position: relative;margin-left: 10px;
-                bottom: 10px;
-                right: 20px;" matPrefix><img src="../../../assets/undo.png" alt="account icon"></mat-icon>
-  Retour
-</button>
-  <button
-    (click)="sendToEvolan()"
-    mat-raised-button
-    color="primary"
-  >
-  <mat-icon style="position: relative;margin-left: 10px;
-                bottom: 10px;
-                right: 20px;" matPrefix><img src="../../../assets/valider.png" alt="account icon"></mat-icon>
+  <button (click)="retour('')" mat-raised-button color="warn">
+    <mat-icon style="position: relative;margin-left: 10px; bottom: 10px; right: 20px;" matPrefix><img
+        src="../../../assets/undo.png" alt="account icon"></mat-icon>
+    Retour
+  </button>
+
+  <button (click)="sendToEvolan()" mat-raised-button color="primary">
+    <mat-icon style="position: relative;margin-left: 10px; bottom: 10px; right: 20px;" matPrefix><img
+        src="../../../assets/valider.png" alt="account icon"></mat-icon>
     Valider
   </button>
-  
-  <!-- <button (click)="openDialogResultatTraitement(personne.valeurid)" mat-raised-button >
-       Resultat Traitement
-    </button> -->
+
 
   <a mat-raised-button [href]="url">
-    <mat-icon style="position: relative;margin-left: 10px;
-                bottom: 10px;
-                right: 20px;" matPrefix><img src="../../../assets/call.png" alt="account icon"></mat-icon>
-                Appeler Client</a>
-                <a *ngIf="personne.resultatTraitement !== 'nouvelle'" mat-raised-button [href]="urlca">
-                  <mat-icon style="position: relative;margin-left: 10px;
-                              bottom: 10px;
-                              right: 20px;" matPrefix><img src="../../../assets/call.png" alt="account icon"></mat-icon>
-                              Appeler CA : {{personne.gsmca}}</a>
+    <mat-icon style="position: relative;margin-left: 10px; bottom: 10px; right: 20px;" matPrefix><img
+        src="../../../assets/call.png" alt="account icon"></mat-icon>
+    Appeler Client
+  </a>
+  <a *ngIf="personne.resultatTraitement !== 'nouvelle'" mat-raised-button [href]="urlca">
+    <mat-icon style="position: relative;margin-left: 10px; bottom: 10px; right: 20px;" matPrefix><img
+        src="../../../assets/call.png" alt="account icon">
+    </mat-icon>
+    Appeler CA : {{personne.gsmca}}
+  </a>
 </div>

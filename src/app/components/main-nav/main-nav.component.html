@@ -7,8 +7,12 @@
                 <mat-icon aria-label="Side nav toggle icon">close</mat-icon>
             </button>
             <span style="color: darkblue">Menu</span>
-            
+
         </mat-toolbar>
+        <mat-nav-list>
+            <a *ngIf="isBO" (click)="drawer.toggle()" mat-list-item [routerLink]="['/register']">
+                <mat-icon>person</mat-icon> Register</a>
+        </mat-nav-list>
         <!-- <mat-nav-list>
             <a *ngIf="isCLIENT" (click)="drawer.toggle()" mat-list-item [routerLink]="['pp']">
                 <mat-icon>person</mat-icon> Personne Physique</a>
@@ -26,10 +30,13 @@
                 *ngIf="isHandset$ | async">
                 <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
             </button>
-            <button *ngIf="isHome" class="goback" (click)="back()"><mat-icon style="position: relative;
+            <button *ngIf="isHome" class="goback" (click)="back()">
+                <mat-icon style="position: relative;
                 bottom: 10px;
-                right: 20px;" matPrefix><img src="../../../assets/back.png" alt="account icon"></mat-icon></button>
-            <span class="slag">Al Amana OpenDATA</span>
+                right: 20px;" matPrefix><img src="../../../assets/back.png" alt="account icon"></mat-icon>
+            </button>
+            <span class="slag">Plateforme de pré-qualification</span>
+            <span class="user"> ( {{user}} est connecté! )</span>
             <span class="spacer"></span>
             <!-- <a *ngIf="isCLIENT" [routerLink]="['pp']" [ngClass]="{ hidden: isHandset$ | async }" class="mat-button mat-button-base" aria-disabled="false"><span class="mat-button-wrapper">Personne Physique</span
         ><span class="mat-button-focus-overlay"></span
@@ -40,9 +47,7 @@
             <a *ngIf="isBO" [routerLink]="['ppg']" [ngClass]="{ hidden: isHandset$ | async }" class="mat-button mat-button-base" aria-disabled="false"><span class="mat-button-wrapper">Personne Physique</span
         ><span class="mat-button-focus-overlay"></span
       ></a> -->
-            <!-- <a *ngIf="isBO" [routerLink]="['pmg']" [ngClass]="{ hidden: isHandset$ | async }" class="mat-button mat-button-base" aria-disabled="false"><span class="mat-button-wrapper">Personne Morale</span
-        ><span class="mat-button-focus-overlay"></span
-      ></a> -->
+            <a *ngIf="isBO" [routerLink]="['/register']" [ngClass]="{ hidden: isHandset$ | async }" class="mat-button mat-button-base" aria-disabled="false"><span class="mat-button-wrapper">Ajouter Utilisateur</span><span class="mat-button-focus-overlay"></span></a>
             <button (click)="logout()" mat-icon-button>
                 <mat-icon style="position: relative;
                 bottom: 10px;

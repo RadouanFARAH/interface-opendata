@@ -60,6 +60,10 @@ mat-form-field {
     border-radius: 30px;
     padding: 10px;
   }
+  button:disabled{
+    background-color: rgb(88, 92, 82);
+    cursor: not-allowed;
+  }
   h1 {
     color: white;
   }
@@ -103,7 +107,7 @@ mat-hint {
 .fields-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, auto));
-  gap: 1px;
+  gap: 5px;
 }
 
 .title {
@@ -114,4 +118,7 @@ mat-hint {
   a {
     font-weight: bolder;
   }
+}
+.margin{
+  margin: 10px;
 }

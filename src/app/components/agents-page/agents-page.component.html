@@ -55,72 +55,17 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
       <td mat-cell *matCellDef="let element">{{ element.email }}</td>
     </ng-container>
-    <ng-container matColumnDef="ville">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Ville</th>
-      <td mat-cell *matCellDef="let element">
-        <mat-form-field class="minWidth" appearance="standard">
-          <mat-select [disabled]="element.qualification !== 'Réorientée'"  *ngIf="element.codeagence !== element.agence_reorientation" [(ngModel)]="element.ville" (selectionChange)="getcodeagenes(element.ville)">
-            <mat-option *ngFor="let v of villes" [value]="v.ville">
-              {{ v.ville }}
-            </mat-option>
-          </mat-select>
-          <mat-hint
-            type="text"
-            style="color: crimson"
-            *ngIf="isHintVille"
-            >{{ HintVille }}</mat-hint
-          >
-          <mat-hint
-          type="text"
-          style="color: crimson"
-          *ngIf="isHintVilleAR"
-          >{{ HintVilleAR }}</mat-hint
-        >
-        </mat-form-field>
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="agence">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Agence</th>
-      <td mat-cell *matCellDef="let element">
-        <mat-form-field class="minWidth" appearance="standard">
-          <mat-select *ngIf="element.codeagence !== element.agence_reorientation" [disabled]="element.qualification !== 'Réorientée'" [(ngModel)]="element.codeagence">
-            <mat-option
-              *ngFor="let agence of agences"
-              [value]="agence.codeagence"
-            >
-              {{ agence.agence }}
-            </mat-option>
-          </mat-select>
-          <mat-hint style="color: crimson" *ngIf="isHintStatutTraitement">{{
-            HintStatutTraitement
-          }}</mat-hint>
-        </mat-form-field>
-      </td>
-    </ng-container>
     <ng-container matColumnDef="codeagence">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Code<br>PDV</th>
       <td mat-cell *matCellDef="let element">
-        {{element.codeagence }}
+        {{ element.agence }} ({{element.codeagence }})
       </td>
     </ng-container>
-    <ng-container matColumnDef="agence_reorientation">
+    <!-- <ng-container matColumnDef="agence_reorientation">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>PDV<br>reorienté</th>
       <td mat-cell *matCellDef="let element">
-        <!-- <mat-form-field class="minWidth" appearance="standard">
-          <mat-select *ngIf="element.codeagence !== element.agence_reorientation" [disabled]="element.qualification !== 'Réorientée'" [(ngModel)]="element.agence_reorientation">
-            <mat-option
-              *ngFor="let agence of agences"
-              [value]="agence.codeagence"
-            >
-              
-            </mat-option>
-          </mat-select>
-          <mat-hint style="color: crimson" *ngIf="isHintStatutTraitement">{{
-            HintStatutTraitement
-          }}</mat-hint>
-        </mat-form-field> -->
         {{ agence.agence_reorientation }}
-    </ng-container>
+    </ng-container> -->
     <ng-container matColumnDef="entry_date">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
       <td mat-cell *matCellDef="let element">
@@ -153,7 +98,7 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Qualification</th>
       <td mat-cell *matCellDef="let element">
           <mat-form-field class="minWidth" appearance="standard">
-              <mat-select [(ngModel)]="element.qualification">
+              <mat-select [(ngModel)]="element.qualification" (selectionChange)="openReorientedModal(element)">
                 <mat-option
                   *ngFor="let status of statusTraitement"
                   [value]="status.statut"
@@ -165,6 +110,48 @@
                 HintStatutTraitement
               }}</mat-hint>
             </mat-form-field>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="ville" >
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Ville</th>
+      <td mat-cell *matCellDef="let element">
+        <mat-form-field class="minWidth" appearance="standard">
+          <mat-select [disabled]="element.qualification !== 'Réorientée'"   [(ngModel)]="element.ville" (selectionChange)="getcodeagenes(element.ville)">
+            <mat-option *ngFor="let v of villes" [value]="v.ville">
+              {{ v.ville }}
+            </mat-option>
+          </mat-select>
+          <mat-hint
+            type="text"
+            style="color: crimson"
+            *ngIf="isHintVille"
+            >{{ HintVille }}</mat-hint
+          >
+          <mat-hint
+          type="text"
+          style="color: crimson"
+          *ngIf="isHintVilleAR"
+          >{{ HintVilleAR }}</mat-hint
+        >
+        </mat-form-field>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="agence" >
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Agence</th>
+      <td mat-cell *matCellDef="let element">
+        <mat-form-field class="minWidth" appearance="standard">
+          <mat-select  [disabled]="element.qualification !== 'Réorientée'" [(ngModel)]="element.codeagence">
+            <mat-option
+              *ngFor="let agence of agences"
+              [value]="agence.codeagence"
+            >
+              {{ agence.agence }}
+            </mat-option>
+          </mat-select>
+          <mat-hint style="color: crimson" *ngIf="isHintStatutTraitement">{{
+            HintStatutTraitement
+          }}</mat-hint>
+        </mat-form-field>
       </td>
     </ng-container>
     <ng-container matColumnDef="statuttraitement">

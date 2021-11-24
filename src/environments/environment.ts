@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  url:"https://intranet.alamana.org.ma:3132/api",
+  // url:"https://192.168.150.40:3132",
 };
 
 /*

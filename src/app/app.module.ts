@@ -48,9 +48,9 @@ import { PersonneDetailsComponent } from './components/personne-details/personne
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {SafeHtmlPipe} from './santi.pipe';
 import { AgentsPageComponent } from './components/agents-page/agents-page.component';
-import { DrPageComponent } from './components/dr-page/dr-page.component';
-import { DsPageComponent } from './components/ds-page/ds-page.component';
 import { MatTableExporterModule } from 'mat-table-exporter';
+import { AgenceReorientationComponent } from './components/agence-reorientation/agence-reorientation.component';
+import { ChangePasswordComponent } from './components/change-password/change-password.component';
 
 const MaterialAngularModules = [
   MatRadioModule,
@@ -87,7 +87,7 @@ const MaterialAngularModules = [
 ];
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, HomeComponent, MainNavComponent , RegisterComponent , PersonneMoraleGestionnaireComponent, PersonneDetailsComponent, SafeHtmlPipe, AgentsPageComponent, DrPageComponent, DsPageComponent],
+  declarations: [AppComponent, LoginComponent, HomeComponent, MainNavComponent , RegisterComponent , PersonneMoraleGestionnaireComponent, PersonneDetailsComponent, SafeHtmlPipe, AgentsPageComponent, AgenceReorientationComponent, ChangePasswordComponent],
   imports: [MatTableExporterModule, HttpClientModule,BrowserModule,FormsModule,ReactiveFormsModule, AppRoutingModule, BrowserAnimationsModule,  LayoutModule, MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule, MatListModule, NgbModule, MaterialAngularModules],
   providers: [{
     provide:HTTP_INTERCEPTORS,

@@ -1,3 +1,5 @@
 export const environment = {
-  production: true
+  production: true,
+   url:"https://intranet.alamana.org.ma:3132/api",
+  //  url:"https://192.168.150.40:3132",
 };

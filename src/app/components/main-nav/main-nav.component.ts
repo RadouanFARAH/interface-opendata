@@ -22,6 +22,7 @@ export class MainNavComponent {
   isAGENT: boolean;
   isCLIENT: boolean;
   isHome: boolean = true;
+  user: string;
 
   constructor(
     private breakpointObserver: BreakpointObserver,
@@ -31,6 +32,7 @@ export class MainNavComponent {
   ) {
     this.isHome = this.route.url !== '/home';
     this.role = localStorage.getItem('role');
+    this.user = localStorage.getItem('user');
     console.log('isBO: ', this.role === 'BO');
     this.isBO = this.role === 'BO';
     this.isAGENT = this.role === 'AGENT';

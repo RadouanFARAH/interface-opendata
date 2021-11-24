@@ -2,13 +2,15 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router'
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AgenceDataService implements Resolve<Object>{
+export class AgenceDataService {
+  public url=environment.url;
   constructor(private http:HttpClient) { }
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): any[] | Observable<Object> | Promise<any[]> {
-    return this.http.get('https://intranet.alamana.org.ma:3132/api/getListVilles')
+  geVilles() {
+    return this.http.get(`${this.url}/getListVilles`)
   }
 }

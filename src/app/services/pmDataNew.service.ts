@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router'
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,27 +11,30 @@ import { Observable } from 'rxjs';
 export class PmDataNewService
 //  implements Resolve<Object>
  {
+  public url=environment.url;
   constructor(private http:HttpClient) { }
   // resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): any[] | Observable<Object> | Promise<any[]> {
-  //   return this.http.post('https://intranet.alamana.org.ma:3132/api/nouvellesdemandes',{})
+  //   return this.http.post(`${this.url}/nouvellesdemandes',{})
   // }
-   getNouvellesDemandes(offset){
-    return this.http.post('https://intranet.alamana.org.ma:3132/api/nouvellesdemandes', {offset})
+
+  getNouvellesDemandes(offset,searchobj){
+    return this.http.post(`${this.url}/nouvellesdemandes`, {...{offset}, ...searchobj})
   }
-  getDemandesEvolan(offset){
-    return this.http.post('https://intranet.alamana.org.ma:3132/api/demandesRS', {offset})
+  getDemandesEvolan(offset,searchobj){
+    return this.http.post(`${this.url}/demandesRS`, {...{offset}, ...searchobj})
   }
-  getDemandesQualifier(offset){
-    return this.http.post('https://intranet.alamana.org.ma:3132/api/demandesqualifer', {offset})
+  getDemandesQualifier(offset, searchobj){
+    return this.http.post(`${this.url}/demandesqualifer`, {...{offset}, ...searchobj})
   }
-  getDemandesPrequalifies(offset){
-    return this.http.post('https://intranet.alamana.org.ma:3132/api/demandesPrequalifies', {offset})
+  getDemandesPrequalifies(offset, searchobj){
+    return this.http.post(`${this.url}/demandesPrequalifies`, {...{offset}, ...searchobj})
   }
+
   getDemandesPrequalifQualif(data){
-    return this.http.post('https://intranet.alamana.org.ma:3132/api/getDemandesPrequalifQualif', data)
+    return this.http.post(`${this.url}/getDemandesPrequalifQualif`, data)
   }
   setDemandesPrequalifQualif(data){
     console.log(data)
-    return this.http.post('https://intranet.alamana.org.ma:3132/api/setDemandesPrequalifQualif', data)
+    return this.http.post(`${this.url}/setDemandesPrequalifQualif`, data)
   }
 }

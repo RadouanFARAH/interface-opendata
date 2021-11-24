@@ -1,6 +1,7 @@
 .form {
   margin: 10px;
-  display: grid;
+  display:grid;
+  grid-gap: 10px;
   grid-template-columns: 25% 25% 25% 25%;
   div {
     margin-left: 20px;
@@ -91,4 +92,7 @@ span.mat-button-wrapper:hover {
     margin: 0;
     font-size: 1.38em;
   }
+}
+mat-form-field{
+  width: 180px;
 }

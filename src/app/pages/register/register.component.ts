@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { CallServerService } from 'src/app/services/call-server.service';
 import { DatabaseService } from 'src/app/services/database.service';
 declare var window:any;
 @Component({
@@ -15,69 +17,67 @@ export class RegisterComponent implements OnInit {
   agences: any[]=[];
   constructor(
     private fb: FormBuilder,
-    private databaseService: DatabaseService
+    private databaseService: DatabaseService,
+    private callServer:CallServerService,
+    private snackBar : MatSnackBar
   ) {
+
   }
 
   ngOnInit(): void {
     this.data = this.fb.group(
       {
-        organisme: ['', Validators.required],
-        agence: ['', Validators.required],
-        nom: [''],
+        codeorganisme: ['', Validators.required],
+        codeagence: ['', Validators.required],
+        name: ['',Validators.required],
         email: ['', Validators.required],
+        gsm: ['', Validators.required],
         password: ['', Validators.required],
-        confirmedPassword: ['', Validators.required],
+        repassword: ['', Validators.required],
       },
       { validators: this.checkPasswords }
     );
   }
   ngAfterViewInit(){
-    this.databaseService
-    .getOrganismes()
-    .then((res: any) => {
-      if (window.openDatabase === undefined){
-        this.organismes = res
-      }else{
-        for (let i = 0; i < res.rows.length; i++) {
-          this.organismes.push(res.rows.item(i));
-        }
-      }
-      console.log('result getting organismes', res);
-
-    })
-    .catch((error) => {
-      console.log('error getting organismes', error);
-    });
+    this.databaseService.getOrganismes().subscribe((res:any)=>{
+      this.organismes = res
+    }, err=>{console.log(err)})
   }
   checkPasswords(group: FormGroup) {
     // here we have the 'passwords' group
     const password = group.get('password').value;
-    const confirmedPassword = group.get('confirmedPassword').value;
-    return password === confirmedPassword ? null : { notSame: true };
+    const repassword = group.get('repassword').value;
+    return password === repassword ? null : { notSame: true };
   }
 
   onSubmit() {
-    console.log(this.data.hasError('notSame'));
+    console.log(this.data.value);
+    this.callServer.register(this.data.value).subscribe((res)=>{
+      let snackBarRef = this.snackBar.open('Utilisateur enregistré en attente de validation!', 'OK', {duration:15000, horizontalPosition:'center', verticalPosition:'top', panelClass:"successClassSnack"});
+      snackBarRef.onAction().subscribe(()=>{
+        snackBarRef.dismiss()
+      })
+      this.data.reset()
+    }, err =>{
+      if (err.status ===500){
+        let snackBarRef = this.snackBar.open("Une Erreur s'est produite, veuillez réessayer plus tard!", 'OK', {duration:15000, horizontalPosition:'center', verticalPosition:'top', panelClass:"failureClassSnack"});
+        snackBarRef.onAction().subscribe(()=>{
+          snackBarRef.dismiss()
+        })
+      } else{
+        let snackBarRef = this.snackBar.open(err.error.msg, 'OK', {duration:15000, horizontalPosition:'center', verticalPosition:'top', panelClass:"failureClassSnack"});
+        snackBarRef.onAction().subscribe(()=>{
+          snackBarRef.dismiss()
+        })
+      }
+    })
   }
 
   changed() {
     this.agences = []
-    let organisme = this.data.get('organisme').value
-    this.databaseService
-      .getAgenceByOrganisme(organisme)
-      .then((res: any) => {
-        if (window.openDatabase === undefined){
-          this.agences = res
-        }else{
-          for (let i = 0; i < res.rows.length; i++) {
-            this.agences.push(res.rows.item(i));
-          }
-        }
-        console.log(`result of selecting ${organisme} :`,res)
-      })
-      .catch((error) => {
-        console.log('error getting agences by organisme ', error);
-      });
+    let organisme = this.data.get('codeorganisme').value
+    this.databaseService.getAgenceByOrganisme({organisme}).subscribe((res:any)=>{
+      this.agences = res
+    }, (err)=>{console.log(err)})
   }
 }

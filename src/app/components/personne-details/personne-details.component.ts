@@ -13,6 +13,7 @@ import { CallServerService } from 'src/app/services/call-server.service';
 import * as moment from 'moment/moment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DatabaseService } from 'src/app/services/database.service';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-personne-details',
@@ -20,77 +21,24 @@ import { DatabaseService } from 'src/app/services/database.service';
   styleUrls: ['./personne-details.component.scss'],
 })
 export class PersonneDetailsComponent implements OnInit {
-  personne = {
-    numtiers:'',
-    typeclient: '',
-    raisonsociale: '',
-    raisonsocialesuite: '',
-    ice: '',
-    rcommerce: '',
-    nifiscale: '',
-    numpattente: '',
-    ribentreprise: '',
-    formejuridique: '',
-    telbureau: '',
-    adresseentreprise: '',
-    rueentreprise: '',
-    quartierentreprise: '',
-    codepostaleentreprise: '',
-    villeentreprise: '',
-    genre: '',
-    nom: '',
-    prenom: '',
-    cin: '',
-    adresse: '',
-    rue: '',
-    quartier: '',
-    codepostal: '',
-    ville: '',
-    teldomicile: '',
-    telgsm: '',
-    telprofessionnel: '',
-    situationfamiliale: '',
-    numrib: '',
-    niveauformalisme: '',
-    montantdemande: '',
-    montantdebloque: '',
-    nombreecheance: '',
-    codeagence: '',
-    codegestionnaire: '',
-    action: '',
-    agence: '',
-    emailcs: '',
-    entry_date: '',
-    email: '',
-    secteur: '',
-    projet: '',
-    resultatTraitement: '',
-    id: '',
-    valeurid: '',
-    gsmca: '',
-    datenaissance: null,
-    datecreation: null,
-    dateexpiration: null,
-    daterendezvous: null,
-    qualification:''
-  };
+  personne:any;
+  niveaux =[{code:"1006",titre:"Aucun Justif formalise"},{code:"1002",titre:"Auto entrepreneur"}];
+  formejuridiques =[{code:"J",titre:"Entrepreneur individuel "},{code:"C",titre:"Société en nom collectif"}]
   agences: any;
   isAlert: boolean = false;
   alert: any;
   // logs: any;
 
   statusTraitement = [
-    { statut: 'Refus par l\'agence' },
-    { statut: 'Doublant' },
+    // { statut: 'Refus par l\'agence' },
     { statut: 'Erronée' },
     { statut: 'Intéressé' },
     { statut: 'Non intéressé' },
-    { statut: 'Non éligible' },
     { statut: 'Injoignable' },
     { statut: 'Intéressé plustard' },
   ];
   qualification = [
-    { statut: 'Injoignable' },
+    { statut: 'Injoignable' },
     { statut: 'Non éligible' },
     { statut: 'Réorientée' },
     { statut: 'Hors zone' },
@@ -98,12 +46,14 @@ export class PersonneDetailsComponent implements OnInit {
     { statut: 'Intéressé plustard' },
     { statut: 'Client non venu au RDV' },
     { statut: 'RDV confirmé' },
-    { statut: 'Dossier en cours' },
+    { statut: 'Dossier en cours' },
     { statut: 'Prêt débloqué' },
-    { statut: 'Contrat annulée'},
-    { statut: 'Client actif' },
-    { statut: 'Sans_feedback' }
+    { statut: 'Prêt soldé' },
+    { statut: 'Contrat annulée' },
+    { statut: 'Contrat consolidé' },
+    { statut: 'Sans_feedback' },
   ];
+  historyDisplayedColumns = ["valeurid","resultatTraitement","user","codegestionnairecible","entry_date","qualification","statuttraitement"]
   url: any;
   urlca: any;
   url2: 'sip:0618265025';
@@ -138,9 +88,12 @@ export class PersonneDetailsComponent implements OnInit {
   villecodeagence: any;
   isSettingEnded: boolean = false;
   // codeagence: any;
-  isIntressed:boolean = false;
+  isIntressed: boolean = false;
   isPretDeb: boolean = false;
   isCIntressed: boolean;
+  origine: any;
+  regions: any;
+  history: MatTableDataSource<any>;
 
   constructor(
     public dialogRef: MatDialogRef<PersonneDetailsComponent>,
@@ -162,7 +115,15 @@ export class PersonneDetailsComponent implements OnInit {
     this.dateadapter.setLocale('en-GB'); // dd/MM/YYYY
     this.villes = datafromdialog.villes;
     this.personne = datafromdialog.personne;
-    this.getCodePostal();
+    this.origine = datafromdialog.origine;
+    this.regions = datafromdialog.regions;
+    console.log(datafromdialog);
+
+    this.callServer
+      .getAnomalies(datafromdialog.personne.valeurid)
+      .subscribe((res) => {
+        console.log(res);
+      });
     console.log('this is queryParams', this.personne);
     this.url = this.sanitizer.bypassSecurityTrustUrl(
       `sip:${this.personne.telgsm}`
@@ -186,44 +147,63 @@ export class PersonneDetailsComponent implements OnInit {
 
     console.log('this is date rendez vous', this.personne.daterendezvous);
     if (this.personne.daterendezvous) {
+      if (this.personne.daterendezvous.length ===10){
+        this.personne.daterendezvous = new Date(this.personne.daterendezvous.split('/')[2]+"/"+this.personne.daterendezvous.split('/')[1]+"/"+this.personne.daterendezvous.split('/')[0])
+      }else
       this.personne.daterendezvous = new Date(this.personne.daterendezvous);
-    } 
+    }
     if (this.personne.datenaissance) {
-      this.personne.datenaissance = new Date(this.personne.datenaissance);
-    } 
+      let str = new Date("").toString()
+      if (str =="Invalid Date"){
+        this.personne.datenaissance=""
+      } else if (this.personne.datenaissance.length ===10){ 
+        this.personne.datenaissance = new Date(this.personne.datenaissance.split('/')[2]+"/"+this.personne.datenaissance.split('/')[1]+"/"+this.personne.datenaissance.split('/')[0])
+      }else if (this.personne.datenaissance.length ===19){
+        this.personne.datenaissance = new Date(this.personne.datenaissance);
+      }else {
+        this.personne.datenaissance=""
+      }
+    }
     if (this.personne.dateexpiration) {
+      if (this.personne.dateexpiration.length ===10){
+        this.personne.dateexpiration = new Date(this.personne.dateexpiration.split('/')[2]+"/"+this.personne.dateexpiration.split('/')[1]+"/"+this.personne.dateexpiration.split('/')[0])
+      }else
       this.personne.dateexpiration = new Date(this.personne.dateexpiration);
-    } 
+    }
+
     console.log('this is date rendez vous', this.personne.daterendezvous);
-    console.log(this.personne.qualification,this.personne.resultatTraitement );
-    
-    if (this.personne.resultatTraitement==="Intéressé"){
+    console.log(this.personne.qualification, this.personne.resultatTraitement);
+
+    if (this.personne.resultatTraitement === 'Intéressé') {
       console.log('intressed');
       this.isCIntressed = true;
-    }else{
+    } else {
       console.log('not instressed');
       this.isCIntressed = false;
       // this.isIntressed = false;
     }
-    if (this.personne.qualification === 'Prêt débloqué'){
+    if (this.personne.qualification === 'Prêt débloqué') {
       console.log('qualified to debloced');
-      
+
       this.isPretDeb = true;
-    }else{
+    } else {
       console.log('not qualified to debloced');
-      
+
       this.isPretDeb = false;
     }
     this.form = this.fb.group({
+      user:[this.personne.user],
+      sendMe:[true],
+      id:[this.personne.id],
       agence: [this.personne.agence],
       entry_date: [this.personne.entry_date],
       email: [this.personne.email],
       secteur: [this.personne.secteur],
       projet: [this.personne.projet],
       daterendezvous: [this.personne.daterendezvous],
-      typeclient: ['P'],
+      typeclient: [this.personne.typeclient],
       raisonsociale: [this.personne.raisonsociale],
-      raisonsocialesuite: [''],
+      raisonsocialesuite: [this.personne.raisonsocialesuite],
       ice: [this.personne.ice],
       rcommerce: [this.personne.rcommerce],
       nifiscale: [this.personne.nifiscale],
@@ -237,11 +217,12 @@ export class PersonneDetailsComponent implements OnInit {
       quartierentreprise: [this.personne.quartierentreprise],
       codepostaleentreprise: [this.personne.codepostaleentreprise],
       villeentreprise: [this.personne.villeentreprise],
-      genre: ['M.'],
+      genre: [this.personne.genre],
       nom: [this.personne.nom],
       prenom: [this.personne.prenom],
       cin: [this.personne.cin],
       dateexpiration: [this.personne.dateexpiration],
+      dateDeblocage: [this.personne.dateDeblocage],
       adresse: [this.personne.adresse],
       rue: [this.personne.rue],
       quartier: [this.personne.quartier],
@@ -259,39 +240,52 @@ export class PersonneDetailsComponent implements OnInit {
       niveauformalisme: ['1006'],
       montantdemande: [this.personne.montantdemande],
       nombreecheance: [this.personne.nombreecheance],
-      codeagence: [this.personne.codeagence],
-      codegestionnaire: ['RSS'],
+      codeagence: [this.personne.origine="AW"?this.personne.codeagencecible:this.personne.codeagence],
+      codegestionnaire: [this.personne.codegestionnaire],
       action: ['TEST'],
-      canal: ['107'],
-      codeagencecible: [''],
-      codeorganisme: ['RS'],
-      origine: ['RS'],
+      canal: [this.origine=="RS"?"107":this.origine=="WB"?"108":this.origine=="AW"?"115":""],
+      codeagencecible: [this.personne.codeagencecible],
+      codeorganisme: [this.origine=="RS"?"RSS":this.origine=="WB"?"WEB":this.origine=="AW"?"AWB":""],
+      origine: [this.origine],
       produit: [''],
-      statutTraitement: [this.personne.resultatTraitement],
+      resultatTraitement: [this.personne.resultatTraitement],
+      statuttraitement: [this.personne.statuttraitement],
       id_od: [this.personne.id],
       valeurid: [this.personne.valeurid],
-      qualification:[this.personne.qualification],
-      montantdebloque:[this.personne.montantdebloque]
+      qualification: [this.personne.qualification],
+      montantdebloque: [this.personne.montantdebloque],
     });
-    this.form.valueChanges.subscribe((res)=>{
-      console.log('form changed', this.form.value.qualification, this.form.value.statutTraitement);
-      
-      let qualif = this.form.value.qualification
-      let trait = this.form.value.statutTraitement
-      if (qualif === 'Prêt débloqué'){
-        this.isPretDeb = true
-      }else{
-        this.isPretDeb = false
+    this.form.valueChanges.subscribe((res) => {
+      console.log(
+        'form changed',
+        this.form.value.qualification,
+        this.form.value.resultatTraitement
+      );
+
+      let qualif = this.form.value.qualification;
+      let trait = this.form.value.resultatTraitement;
+      if (qualif === 'Prêt débloqué') {
+        this.isPretDeb = true;
+      } else {
+        this.isPretDeb = false;
       }
-      if (trait === 'Intéressé'){
-        this.isIntressed = true
-      }else{
-        this.isIntressed=false
+      if (trait === 'Intéressé') {
+        this.isIntressed = true;
+      } else {
+        this.isIntressed = false;
       }
-    })
+    });
   }
   ngAfterViewInit() {
+    let data2 = {
+      valeurid:this.personne.valeurid
+    }
+    this.callServer.getHistory(data2).subscribe((res:any)=>{
+      
+      this.history =  new MatTableDataSource(res.result);
 
+      
+    })
     let data = {
       agence: this.personne.agence,
     };
@@ -301,82 +295,88 @@ export class PersonneDetailsComponent implements OnInit {
     this.callServer.getAgences(dataville).subscribe(
       (resp: any) => {
         this.agences = resp.results;
-        this.callServer.getCodeAgence(data).subscribe(
-          async (resp: any) => {
-            this.villecodeagence =
-              resp.results.length > 0 ? resp.results[0].codeagence : '';
+        // this.callServer.getCodeAgence(data).subscribe(
+        //   async (resp: any) => {
+        //     this.villecodeagence =
+        //       resp.results.length > 0 ? resp.results[0].codeagence : '';
 
-            if (this.personne.datenaissance) {
-              this.form.patchValue({
-                datenaissance: new Date(this.personne.datenaissance),
-              });
-            }
-            if (this.personne.datecreation) {
-              this.form.patchValue({
-                datecreation: new Date(this.personne.datecreation),
-              });
-            }
-            if (this.personne.dateexpiration) {
-              this.form.patchValue({
-                dateexpiration: new Date(this.personne.dateexpiration),
-              });
-            }
-            // this.personne.codepostal = codepostale[0].codePostale;
-            //  this.personne.datecreation = this.personne.datecreation && new Date(this.personne.datecreation)
-            //  this.personne.dateexpiration = this.personne.dateexpiration && new Date(this.personne.dateexpiration)
-          },
-          (err) => console.log(err)
-        );
+
+        //     // this.personne.codepostal = codepostale[0].codePostale;
+        //     //  this.personne.datecreation = this.personne.datecreation && new Date(this.personne.datecreation)
+        //     //  this.personne.dateexpiration = this.personne.dateexpiration && new Date(this.personne.dateexpiration)
+        //   },
+        //   (err) => console.log(err)
+        // );
       },
       (err) => console.log(err)
     );
+    if (this.personne.datenaissance) {
+      this.form.patchValue({
+        datenaissance: new Date(this.personne.datenaissance),
+      });
+    }
+    if (this.personne.datecreation) {
+      this.form.patchValue({
+        datecreation: new Date(this.personne.datecreation),
+      });
+    }
+    if (this.personne.dateexpiration) {
+      this.form.patchValue({
+        dateexpiration: new Date(this.personne.dateexpiration),
+      });
+    }
+    this.getCodePostal();
+
   }
   async getCodePostal() {
     console.log('getting code postale of :', this.personne.ville);
-    let codepostale: any;
-    if (this.personne.ville)
-      codepostale = await this.db.getCodePostaleByVille(this.personne.ville);
-    console.log(codepostale);
-    if (codepostale && codepostale.length > 0)
+    let ville = this.personne.ville
+    this.db.getCodePostaleByVille({ville:ville}).subscribe((res:any)=>{
+      if (res.length>0)
       this.form.patchValue({
-        codepostal: codepostale[0].codePostale,
+        codepostal: res.codePostale,
       });
+    }, err=>console.log(err))
   }
+
+
   show() {
     console.log(this.form.value);
   }
 
-  getStatut(numtiers, codegestionnaire) {
-    let data = {
-      numTier: numtiers,
-      codeGest: codegestionnaire,
-    };
-    this.callServer.getStatus(data).subscribe(
-      (res: any) => {
-        this.isAlert = true;
-        this.alert = res.EMP.Demande[0].statut;
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }
+  // getStatut(numtiers, codegestionnaire) {
+  //   let data = {
+  //     numTier: numtiers,
+  //     codeGest: codegestionnaire,
+  //   };
+  //   this.callServer.getStatus(data).subscribe(
+  //     (res: any) => {
+  //       this.isAlert = true;
+  //       this.alert = res.EMP.Demande[0].statut;
+  //     },
+  //     (err) => {
+  //       console.log(err);
+  //     }
+  //   );
+  // }
   sendToEvolan() {
     let personne = this.form.value;
+    console.log(personne);
+    
     if (personne.datenaissance) {
-      personne.datenaissance = moment(personne.datenaissance).format('L');
+      personne.datenaissance = moment(personne.datenaissance).format('DD/MM/YYYY')
     }
     if (personne.datecreation) {
-      personne.datecreation = moment(personne.datecreation).format('L');
+      personne.datecreation = moment(personne.datecreation).format('DD/MM/YYYY')
     }
     if (personne.dateexpiration) {
-      personne.dateexpiration = moment(personne.dateexpiration).format('L');
+      personne.dateexpiration = moment(personne.dateexpiration).format('DD/MM/YYYY')
     }
     if (personne.daterendezvous) {
-      personne.daterendezvous = moment(personne.daterendezvous).format('L');
+      personne.daterendezvous = moment(personne.daterendezvous).format('DD/MM/YYYY')
     }
-    if (personne.statutTraitement) {
-      if (personne.statutTraitement === 'Intéressé') {
+    if (personne.resultatTraitement) {
+      if (personne.resultatTraitement === 'Intéressé') {
         personne.action = 'REC';
         var arabicCharUnicodeRange = /[\u0600-\u06FF]/;
         if (!personne.nom) {
@@ -416,7 +416,9 @@ export class PersonneDetailsComponent implements OnInit {
           this.isHintCIN = true;
           return;
         }
-        if (!personne.situationfamiliale) {
+        console.log("situationfamiliale est:", personne.situationfamiliale, personne.situationfamiliale!=="C", personne.situationfamiliale!=="M", personne.situationfamiliale!=="C" || personne.situationfamiliale!=="M");
+        
+        if (personne.situationfamiliale!=="C" && personne.situationfamiliale!=="M") {
           this.HintSituationFamiliale =
             'la situation familiale est obligatoire';
           this.isHintSituationFamiliale = true;
@@ -458,7 +460,6 @@ export class PersonneDetailsComponent implements OnInit {
         this.callServer.sendToEvolan(personne).subscribe(
           (res: any) => {
             this.onNoClick(this.datafromdialog.source).then(() => {
-              window.location.reload()
               let snackBarRef = this.snackBar.open(
                 'Demande enregistrer avec ID :' + res.msg,
                 'OK',
@@ -509,7 +510,7 @@ export class PersonneDetailsComponent implements OnInit {
           }
         );
       } else {
-        if (personne.statutTraitement === 'nouvelle') {
+        if (personne.resultatTraitement === 'nouvelle') {
           console.log('please insert a status');
           this.HintStatutTraitement = 'le statut de traitement est obligatoire';
           this.isHintStatutTraitement = true;
@@ -520,7 +521,6 @@ export class PersonneDetailsComponent implements OnInit {
           this.callServer.sendToEvolan(personne).subscribe(
             (res: any) => {
               this.onNoClick(this.datafromdialog.source).then(() => {
-                window.location.reload()
                 let snackBarRef = this.snackBar.open(
                   'Demande enregistrer avec ID :' + res.msg,
                   'OK',
@@ -561,6 +561,34 @@ export class PersonneDetailsComponent implements OnInit {
       this.HintStatutTraitement = 'le statut de traitement est obligatoire';
       this.isHintStatutTraitement = true;
     }
+  }
+  retour(status): Promise<any> {
+    let user = localStorage.getItem('role')
+    if (!this.personne.valeurid) {
+      let obj = {
+        origine:this.origine,
+        id: this.personne.id,
+        user: user,
+        nom: this.personne.nom,
+        prenom: this.personne.prenom,
+        telgsm: this.personne.telgsm,
+        cin: this.personne.cin,
+      };
+      this.callServer.unlock(obj).subscribe((res) => {
+        console.log('unlocked');
+      },(err)=>{
+        if (err.status && err.status === 505) {
+          let snackBarRef = this.snackBar.open('unlock failed!', 'OK', {duration:2000, horizontalPosition:'center', verticalPosition:'top'});
+          snackBarRef.onAction().subscribe(()=>{
+            snackBarRef.dismiss()
+          })
+        }
+      });
+    }
+    this.dialogRef.close(status);
+    return new Promise((resolve, reject) => {
+      resolve('');
+    });
   }
   onNoClick(status): Promise<any> {
     this.dialogRef.close(status);

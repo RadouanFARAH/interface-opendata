@@ -5,7 +5,7 @@
     </div>
 
     <div class="open_data">
-      <h1>OPEN DATA</h1>
+      <h1>Plateforme de pré-qualification</h1>
     </div>
     <form [formGroup]="data">
       <div style="margin: 15px auto;">
@@ -42,6 +42,9 @@
                       bottom: 7px;" matPrefix><img *ngIf="hide" src="../../../assets/invisible.png" alt="account icon"></mat-icon>
           </button>
         </mat-form-field>
+        <p class="remember_me">
+        <a (click)="forgetPassword()">Changer mot de passe</a>
+        </p>
       </div>
   
       <!-- <p class="remember_me">
