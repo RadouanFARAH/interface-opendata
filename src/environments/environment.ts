@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  url:"https://localhost:4200/api",
-  // url:"https://intranet.alamana.org.ma:3132/api",
+  // url:"https://localhost:4200/api",
+  url:"https://intranet.alamana.org.ma:8888/api",
   // url:"https://192.168.150.40:3132",
 };
 

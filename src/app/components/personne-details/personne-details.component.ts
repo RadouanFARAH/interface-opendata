@@ -21,9 +21,9 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./personne-details.component.scss'],
 })
 export class PersonneDetailsComponent implements OnInit {
-  personne:any;
-  niveaux =[{code:"1006",titre:"Aucun Justif formalise"},{code:"1002",titre:"Auto entrepreneur"}];
-  formejuridiques =[{code:"J",titre:"Entrepreneur individuel "},{code:"C",titre:"Société en nom collectif"}]
+  personne: any;
+  niveaux = [{ code: "1006", titre: "Aucun Justif formalise" }, { code: "1002", titre: "Auto entrepreneur" }];
+  formejuridiques = [{ code: "J", titre: "Entrepreneur individuel " }, { code: "C", titre: "Société en nom collectif" }]
   agences: any;
   isAlert: boolean = false;
   alert: any;
@@ -53,7 +53,7 @@ export class PersonneDetailsComponent implements OnInit {
     { statut: 'Contrat consolidé' },
     { statut: 'Sans_feedback' },
   ];
-  historyDisplayedColumns = ["valeurid","resultatTraitement","user","codegestionnairecible","entry_date","qualification","statuttraitement"]
+  historyDisplayedColumns = ["valeurid", "resultatTraitement", "user", "codegestionnairecible", "entry_date", "qualification", "statuttraitement"]
   url: any;
   urlca: any;
   url2: 'sip:0618265025';
@@ -117,14 +117,13 @@ export class PersonneDetailsComponent implements OnInit {
     this.personne = datafromdialog.personne;
     this.origine = datafromdialog.origine;
     this.regions = datafromdialog.regions;
-    console.log(datafromdialog);
-
+    console.log("datenaissance", datafromdialog.personne.datenaissance);
     this.callServer
       .getAnomalies(datafromdialog.personne.valeurid)
       .subscribe((res) => {
         console.log(res);
       });
-    console.log('this is queryParams', this.personne);
+    console.log('this is queryParams', this.personne.datenaissance);
     this.url = this.sanitizer.bypassSecurityTrustUrl(
       `sip:${this.personne.telgsm}`
     );
@@ -146,29 +145,27 @@ export class PersonneDetailsComponent implements OnInit {
   ngOnInit(): void {
 
     console.log('this is date rendez vous', this.personne.daterendezvous);
+    console.log('this is datenaissance', this.personne.datenaissance);
     if (this.personne.daterendezvous) {
-      if (this.personne.daterendezvous.length ===10){
-        this.personne.daterendezvous = new Date(this.personne.daterendezvous.split('/')[2]+"/"+this.personne.daterendezvous.split('/')[1]+"/"+this.personne.daterendezvous.split('/')[0])
-      }else
-      this.personne.daterendezvous = new Date(this.personne.daterendezvous);
+      if (this.personne.daterendezvous.length === 10) {
+        this.personne.daterendezvous = new Date(this.personne.daterendezvous.split('/')[2] + "/" + this.personne.daterendezvous.split('/')[1] + "/" + this.personne.daterendezvous.split('/')[0])
+      } else
+        this.personne.daterendezvous = new Date(this.personne.daterendezvous);
     }
     if (this.personne.datenaissance) {
-      let str = new Date("").toString()
-      if (str =="Invalid Date"){
-        this.personne.datenaissance=""
-      } else if (this.personne.datenaissance.length ===10){ 
-        this.personne.datenaissance = new Date(this.personne.datenaissance.split('/')[2]+"/"+this.personne.datenaissance.split('/')[1]+"/"+this.personne.datenaissance.split('/')[0])
-      }else if (this.personne.datenaissance.length ===19){
+      if (this.personne.datenaissance.length === 10) {
+        this.personne.datenaissance = new Date(this.personne.datenaissance.split('/')[2] + "/" + this.personne.datenaissance.split('/')[1] + "/" + this.personne.datenaissance.split('/')[0])
+      } else if (this.personne.datenaissance.length === 19) {
         this.personne.datenaissance = new Date(this.personne.datenaissance);
-      }else {
-        this.personne.datenaissance=""
+      } else {
+        this.personne.datenaissance = ""
       }
     }
     if (this.personne.dateexpiration) {
-      if (this.personne.dateexpiration.length ===10){
-        this.personne.dateexpiration = new Date(this.personne.dateexpiration.split('/')[2]+"/"+this.personne.dateexpiration.split('/')[1]+"/"+this.personne.dateexpiration.split('/')[0])
-      }else
-      this.personne.dateexpiration = new Date(this.personne.dateexpiration);
+      if (this.personne.dateexpiration.length === 10) {
+        this.personne.dateexpiration = new Date(this.personne.dateexpiration.split('/')[2] + "/" + this.personne.dateexpiration.split('/')[1] + "/" + this.personne.dateexpiration.split('/')[0])
+      } else
+        this.personne.dateexpiration = new Date(this.personne.dateexpiration);
     }
 
     console.log('this is date rendez vous', this.personne.daterendezvous);
@@ -192,9 +189,9 @@ export class PersonneDetailsComponent implements OnInit {
       this.isPretDeb = false;
     }
     this.form = this.fb.group({
-      user:[this.personne.user],
-      sendMe:[true],
-      id:[this.personne.id],
+      user: [this.personne.user],
+      sendMe: [true],
+      id: [this.personne.id],
       agence: [this.personne.agence],
       entry_date: [this.personne.entry_date],
       email: [this.personne.email],
@@ -229,7 +226,7 @@ export class PersonneDetailsComponent implements OnInit {
       codepostal: [this.personne.codepostal],
       ville: [
         this.personne.ville.charAt(0).toUpperCase() +
-          this.personne.ville.slice(1),
+        this.personne.ville.slice(1),
       ],
       teldomicile: [this.personne.teldomicile],
       telgsm: [this.personne.telgsm],
@@ -240,12 +237,12 @@ export class PersonneDetailsComponent implements OnInit {
       niveauformalisme: ['1006'],
       montantdemande: [this.personne.montantdemande],
       nombreecheance: [this.personne.nombreecheance],
-      codeagence: [this.personne.origine="AW"?this.personne.codeagencecible:this.personne.codeagence],
+      codeagence: [this.personne.origine = "AW" ? this.personne.codeagencecible : this.personne.codeagence],
       codegestionnaire: [this.personne.codegestionnaire],
       action: ['TEST'],
-      canal: [this.origine=="RS"?"107":this.origine=="WB"?"108":this.origine=="AW"?"115":""],
+      canal: [this.origine == "RS" ? "107" : this.origine == "WB" ? "108" : this.origine == "AW" ? "115" : ""],
       codeagencecible: [this.personne.codeagencecible],
-      codeorganisme: [this.origine=="RS"?"RSS":this.origine=="WB"?"WEB":this.origine=="AW"?"AWB":""],
+      codeorganisme: [this.origine == "RS" ? "RSS" : this.origine == "WB" ? "WEB" : this.origine == "AW" ? "AWB" : ""],
       origine: [this.origine],
       produit: [''],
       resultatTraitement: [this.personne.resultatTraitement],
@@ -278,13 +275,13 @@ export class PersonneDetailsComponent implements OnInit {
   }
   ngAfterViewInit() {
     let data2 = {
-      valeurid:this.personne.valeurid
+      valeurid: this.personne.valeurid
     }
-    this.callServer.getHistory(data2).subscribe((res:any)=>{
-      
-      this.history =  new MatTableDataSource(res.result);
+    this.callServer.getHistory(data2).subscribe((res: any) => {
 
-      
+      this.history = new MatTableDataSource(res.result);
+
+
     })
     let data = {
       agence: this.personne.agence,
@@ -331,12 +328,12 @@ export class PersonneDetailsComponent implements OnInit {
   async getCodePostal() {
     console.log('getting code postale of :', this.personne.ville);
     let ville = this.personne.ville
-    this.db.getCodePostaleByVille({ville:ville}).subscribe((res:any)=>{
-      if (res.length>0)
-      this.form.patchValue({
-        codepostal: res.codePostale,
-      });
-    }, err=>console.log(err))
+    this.db.getCodePostaleByVille({ ville: ville }).subscribe((res: any) => {
+      if (res.length > 0)
+        this.form.patchValue({
+          codepostal: res.codePostale,
+        });
+    }, err => console.log(err))
   }
 
 
@@ -362,7 +359,7 @@ export class PersonneDetailsComponent implements OnInit {
   sendToEvolan() {
     let personne = this.form.value;
     console.log(personne);
-    
+
     if (personne.datenaissance) {
       personne.datenaissance = moment(personne.datenaissance).format('DD/MM/YYYY')
     }
@@ -416,9 +413,9 @@ export class PersonneDetailsComponent implements OnInit {
           this.isHintCIN = true;
           return;
         }
-        console.log("situationfamiliale est:", personne.situationfamiliale, personne.situationfamiliale!=="C", personne.situationfamiliale!=="M", personne.situationfamiliale!=="C" || personne.situationfamiliale!=="M");
-        
-        if (personne.situationfamiliale!=="C" && personne.situationfamiliale!=="M") {
+        console.log("situationfamiliale est:", personne.situationfamiliale, personne.situationfamiliale !== "C", personne.situationfamiliale !== "M", personne.situationfamiliale !== "C" || personne.situationfamiliale !== "M");
+
+        if (personne.situationfamiliale !== "C" && personne.situationfamiliale !== "M") {
           this.HintSituationFamiliale =
             'la situation familiale est obligatoire';
           this.isHintSituationFamiliale = true;
@@ -566,7 +563,7 @@ export class PersonneDetailsComponent implements OnInit {
     let user = localStorage.getItem('role')
     if (!this.personne.valeurid) {
       let obj = {
-        origine:this.origine,
+        origine: this.origine,
         id: this.personne.id,
         user: user,
         nom: this.personne.nom,
@@ -576,10 +573,10 @@ export class PersonneDetailsComponent implements OnInit {
       };
       this.callServer.unlock(obj).subscribe((res) => {
         console.log('unlocked');
-      },(err)=>{
+      }, (err) => {
         if (err.status && err.status === 505) {
-          let snackBarRef = this.snackBar.open('unlock failed!', 'OK', {duration:2000, horizontalPosition:'center', verticalPosition:'top'});
-          snackBarRef.onAction().subscribe(()=>{
+          let snackBarRef = this.snackBar.open('unlock failed!', 'OK', { duration: 2000, horizontalPosition: 'center', verticalPosition: 'top' });
+          snackBarRef.onAction().subscribe(() => {
             snackBarRef.dismiss()
           })
         }

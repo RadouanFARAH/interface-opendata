@@ -740,7 +740,6 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
             this.nbr = Math.floor(this.dataSource.data[0].nbr / 10);
           }
         }
-
         this.dataSourceToFilter = new MatTableDataSource(personnes);
         this.cdr.detectChanges();
         this.display = 'initial';
@@ -879,7 +878,7 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
   }
 
   send(personne): void {
-    console.log('hola');
+    console.log('hola', personne.datenaissance);
     if (this.natureSelectedValue === 'nouvelle') {
       // check if locked
       let user = localStorage.getItem('role');
@@ -894,6 +893,7 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
       };
       this.callServer.lock(obj).subscribe(
         (res) => {
+          console.log('hola', personne.datenaissance);
           const dialogRef = this.dialog.open(PersonneDetailsComponent, {
             width: "80vw",
             disableClose: true,
