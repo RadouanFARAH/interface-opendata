@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { JwtHelperService } from "@auth0/angular-jwt";
+import { isJwtExpired } from 'jwt-check-expiration';
+ 
 import {
   CanActivate,
   ActivatedRouteSnapshot,
@@ -14,6 +17,10 @@ import { AuthService } from './auth.service';
 })
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private route: Router) {}
+  tokenExpired(token: string) {
+    const expiry = (JSON.parse(atob(token.split('.')[1]))).exp;
+    return (Math.floor((new Date).getTime() / 1000)) >= expiry;
+  }
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
@@ -23,7 +30,10 @@ export class AuthGuard implements CanActivate {
     | boolean
     | UrlTree {
     let token = this.authService.getToken();
-    if (token) {
+    const helper = new JwtHelperService();
+    const isExpired = helper.isTokenExpired(token) ||isJwtExpired(token) || this.tokenExpired(token) ;
+
+    if (token && !isExpired) {
       return true;
     } else {
       this.route.navigate(['login']);

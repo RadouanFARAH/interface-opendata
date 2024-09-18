@@ -34,7 +34,6 @@ export class PmDataNewService
     return this.http.post(`${this.url}/getDemandesPrequalifQualif`, data)
   }
   setDemandesPrequalifQualif(data){
-    console.log(data)
     return this.http.post(`${this.url}/setDemandesPrequalifQualif`, data)
   }
 }

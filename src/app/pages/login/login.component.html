@@ -20,46 +20,33 @@
       <div style="margin: 15px auto;">
         <mat-form-field appearance="fill">
           <mat-label> Mot de passe</mat-label>
-          <input
-          formControlName="password"
-            matInput
-            [type]="hide ? 'password' : 'text'"
-            placeholder="Mot de passe"
-          />
+          <input formControlName="password" matInput [type]="hide ? 'password' : 'text'" placeholder="Mot de passe" />
           <mat-icon style="position: relative;
           bottom: 7px;" matPrefix><img src="../../../assets/lock-open.png" alt="account icon"></mat-icon>
           <mat-hint *ngIf="false">Hint</mat-hint>
-          <button
-            mat-icon-button
-            matSuffix
-            (click)="hide = !hide"
-            [attr.aria-label]="'Hide password'"
-            [attr.aria-pressed]="hide"
-          >
-            <mat-icon style="position: relative;
-          bottom: 7px;" matPrefix><img *ngIf="!hide" src="../../../assets/visible.png" alt="account icon"></mat-icon>
-                      <mat-icon style="position: relative;
-                      bottom: 7px;" matPrefix><img *ngIf="hide" src="../../../assets/invisible.png" alt="account icon"></mat-icon>
-          </button>
+          <mat-icon (click)="hide=!hide" style="position: relative;
+          bottom: 7px;" matSuffix><img [src]="hide?'../../../assets/invisible.png':'../../../assets/visible.png'" alt="account icon"></mat-icon>
         </mat-form-field>
-        <p class="remember_me">
-        <a (click)="forgetPassword()">Changer mot de passe</a>
+        <p class="little-link">
+          <a (click)="changePassword()">Changer mot de passe</a>
+          <a (click)="forgotPassword()">mot de passe oublié?</a>
         </p>
       </div>
-  
+
       <!-- <p class="remember_me">
         <mat-checkbox formControlName="remember" color="warn">Se rappeler de moi</mat-checkbox>
         <a href="#">Mot de passe oublié?</a>
       </p> -->
+      <p class="login">
+        <button id="connect" [disabled]="!data.valid" mat-raised-button (keypress)="connectt($event)" (click)="connect()">
+          <h1>se connecter</h1>
+        </button>
+      </p>
     </form>
 
 
-    <p class="login">
-      <button [disabled]="!data.valid" mat-raised-button (keydown)="connectt($event)" (click)="connect()">
-        <h1>se connecter</h1>
-      </button>
-    </p>
-  <!--
+
+    <!--
   <p class="login">
     <button mat-raised-button (click)="setToken()"><h1>Get Token</h1></button>
   </p>

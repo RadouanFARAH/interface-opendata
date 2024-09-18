@@ -14,6 +14,8 @@ import * as XLSX from 'xlsx';
 import { ChangeDetectorRef } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AgenceDataService } from 'src/app/services/agenceData.service';
+import { EventServiceService } from 'src/app/services/event-service.service';
+import { Subscription } from 'rxjs';
 
 const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -25,10 +27,9 @@ const EXCEL_EXTENSION = '.xlsx';
 })
 export class PersonneMoraleGestionnaireComponent implements OnInit {
   display = 'none';
-  source = [{ value: 'FX', viewValue: 'Depuis Fichier Excel' }];
+  source = [];
 
   nature = [
-    { value: 'nouvelle', viewValue: 'Nouvelles demandes' },
     { value: 'prequalifier', viewValue: 'Demandes pré-qualifiées' },
     { value: 'qualifier', viewValue: 'Demandes qualifiées' },
     { value: 'evolan', viewValue: 'Status des contrats' },
@@ -59,7 +60,7 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
     { statutC: 'Dossier en cours', statut: 'Dossier en cours' },
     { statutC: 'Prêt débloqué', statut: 'Prêt débloqué' },
     { statutC: 'Prêt soldé', statut: 'Prêt soldé' },
-    { statutC: 'Contrat annulée', statut: 'Contrat annulée' },
+    { statutC: 'Contrat annulé', statut: 'Contrat annulé' },
     { statutC: 'Contrat consolidé', statut: 'Contrat consolidé' },
     { statutC: 'Client actif', statut: 'Client actif' },
     { statutC: 'Sans_feedback', statut: 'Sans_feedback' },
@@ -69,15 +70,15 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
   displayedColumns: string[] = [
     'valeurid',
     'nom',
-    
+
     'cin',
-    'telgsm',
+    'typeclient',
     'ville',
     'agence',
     'codeagence',
     'entry_date',
     'dateDeblocage',
-    
+
     'montantdemande',
     'nbrappel',
     'resultatTraitement',
@@ -85,7 +86,7 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
     'statuttraitement',
     'montantdebloque',
     'delay_trait',
-    'options',
+    'options'
   ];
   selectedCINValue = '';
   dataSource: MatTableDataSource<any>;
@@ -135,6 +136,12 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
   regions: string;
   origins: string;
   role: string;
+  batchfinished: boolean;
+  Gest2: boolean = false;
+  isAgent: boolean;
+  isRIFSO: boolean;
+  creation: boolean;
+  partenaire: boolean;
   constructor(
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef,
@@ -144,35 +151,74 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
     private route: Router,
     private newOrdersService: PmDataNewService,
     private dateadapter: DateAdapter<Date>,
-    private agenceDataService:AgenceDataService
+    private agenceDataService: AgenceDataService,
+    private sharedService:EventServiceService
   ) {
 
     this.role = localStorage.getItem('role');
+    if (this.role.startsWith("AGT")) {
+      this.isAgent = true;
+    }
     this.user = localStorage.getItem('user');
     this.origins = localStorage.getItem('origins');
+
+    if (this.origins.includes("RF")) {
+      this.isRIFSO = true
+    }
     this.regions = localStorage.getItem('regions');
 
     if (this.role === 'BO') {
       this.isBO = true;
     }
 
-    // if (this.role.startsWith("AGT")) this.nature.unshift()
-    if (this.origins.includes("WB")) this.source.unshift({ value: 'WB', viewValue: 'Depuis le Site Web' })
-    if (this.origins.includes("RS")) this.source.unshift({ value: 'RS', viewValue: 'Depuis les réseaux sociaux' })
-    if (this.origins.includes("AW")) this.source.unshift({ value: 'AW', viewValue: 'Depuis Attijari' })
+    if (this.user === 'GEST2') {
+
+      this.Gest2 = true;
+    }
+
+    // if (this.role.startsWith("AGT")) this.nature.unshift() 
+    // if (this.origins.includes("WB")) {
+    //   this.source.unshift({ value: 'WB', viewValue: 'Depuis le Site Web' })
+    // }
+    // if (this.origins.includes("RS")) {
+
+    // }
+    // if (this.origins.includes("AW")) {
+    //   this.source.unshift({ value: 'AW', viewValue: 'Depuis Attijari' })
+    // }
+    // if (this.origins.includes("AA")) {
+    //   this.source.unshift({ value: 'AA', viewValue: 'Depuis liste de Fidélisation' })
+    // }
+    // if (this.origins.includes("RF")) {
+    //   this.source.unshift({ value: 'RF', viewValue: 'Depuis  Plateforme RIFSO' })
+    // }
+    const organismes = localStorage.getItem('organismes')
+    this.source = JSON.parse(organismes)
+    if (this.source.length === 1){
+      this.partenaire = true;
+      this.sourceSelectedValue = this.source[0].value
+      this.sourceChanged()
+      this.natureSelectedValue = 'evolan'
+      this.natureChanged()
+
+    }
     this.dateadapter.setLocale('en-GB');
 
-    this.agenceDataService.geVilles().subscribe((respp:any) => {
+    this.agenceDataService.geVilles().subscribe((respp: any) => {
       this.villes = respp.results;
     });
 
   }
   fileUploaded(e) {
-    console.log(e);
+  }
+
+  getColor(isNew){
+    if (isNew){
+      return 'darkblue'
+    }
+    return 'black'
   }
   Previous() {
-    console.log('the offset is :', this.offset);
-
     if (this.offset === 0) return;
     else {
       this.offset = this.offset - this.pagination;
@@ -182,8 +228,6 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
   }
 
   Next() {
-    console.log('the offset is :', this.offset);
-
     if (this.dataLength < this.pagination) return;
     else {
       this.offset = this.offset + this.pagination;
@@ -202,30 +246,50 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
     this.selectedValue = '';
     this.statutSelectedValue = '';
     this.statutQualifierSelectedValue = '';
-
-    this.form2.patchValue({
-      fromDate: null,
-      toDate: null,
-    });
+    if (!this.partenaire){
+      this.form2.patchValue({
+        fromDate: null,
+        toDate: null,
+      });
+    }
     this.FX_selected = false;
     this.S_selected = false;
     this.offset = 0;
-    if (this.sourceSelectedValue === 'WB') {
+    if (this.sourceSelectedValue === 'WB'  ) {
       this.origine = 'WB';
       this.S_selected = true;
-
+      this.nature.length == 3  ? this.nature.unshift({ value: 'nouvelle', viewValue: 'Nouvelles demandes' }) : ''
       // this.getDemanedWeb()
-    } else if (this.sourceSelectedValue === 'RS') {
+    } 
+     if (this.sourceSelectedValue === 'RS' ) {
       this.origine = 'RS';
+      this.nature.length == 3  ? this.nature.unshift({ value: 'nouvelle', viewValue: 'Nouvelles demandes' }) : ''
 
       this.S_selected = true;
-    } else if (this.sourceSelectedValue === 'AW') {
+    } 
+     if (this.sourceSelectedValue === 'AW' ) {
       this.origine = 'AW';
-
+      this.nature.length > 3 ? this.nature.shift() : ''
+      this.S_selected = true;
+    } 
+    if (this.sourceSelectedValue === 'RF') {
+      this.origine = 'RF';
+      this.nature.length > 3 ? this.nature.shift() : ''
       this.S_selected = true;
     }
-    else if (this.sourceSelectedValue === 'FX') {
+    if (this.sourceSelectedValue === 'AA') {
+      this.origine = 'AA';
+      this.nature.length > 3 ? this.nature.shift() : ''
+      this.S_selected = true;
+    }
+    if (this.sourceSelectedValue === 'FX') {
       this.FX_selected = true;
+      this.nature.length > 3 ? this.nature.shift() : ''
+    }
+    if (this.sourceSelectedValue === 'AR'){
+      this.origine = 'AR';
+      this.S_selected = true;
+      this.nature.length > 3 ? this.nature.shift() : ''
     }
   }
   arrayBuffer: any;
@@ -233,9 +297,7 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
   incomingfile(e) {
     this.file = e.target.files[0];
     let size = e.target.files[0].size
-    console.log(Math.floor(size / 1024));
 
-    console.log(this.file);
     if (this.file.name.split('.')[1] !== 'xlsx') {
       let snackBarRef = this.snackBar.open('Pas un fichier Excel!', 'OK', {
         duration: 15000,
@@ -249,7 +311,6 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
       let formData = new FormData()
       formData.append('file', this.file);
       this.callServer.uploadFile(formData).subscribe((res) => {
-        console.log('done')
       }, (err) => {
         console.log(err);
       })
@@ -287,7 +348,6 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
       fromDate,
       toDate,
     };
-    console.log('natureChanged', this.offset);
     this.isSourceSelected = true;
     this.dataSource = null;
 
@@ -304,24 +364,27 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
   }
   notifydsdr() {
     this.callServer.notifydrds().subscribe((res) => {
-      console.log('done');
     });
   }
   rappelerdsdr() {
     this.callServer.rappelerdsdr().subscribe((res) => {
-      console.log('done');
     });
   }
 
   notifyDPRM() {
-    console.log('done1');
     this.callServer.notifyDPRM().subscribe((res) => {
-      console.log('done2');
     });
   }
-  MAJdemandeSorts2() {
-    this.callServer.MAJdemandeSorts2().subscribe((res) => {
-      console.log('done');
+  MAJdemandeSorts() {
+    this.batchfinished = true
+    this.callServer.MAJdemandeSorts().subscribe((res) => {
+      this.navigationChanged()
+      this.batchfinished = false
+    }, (err) => {
+      this.batchfinished = false
+      this.navigationChanged()
+      console.log(err);
+
     });
   }
   natureChanged() {
@@ -333,10 +396,12 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
     this.selectedValue = '';
     this.statutSelectedValue = '';
     this.statutQualifierSelectedValue = '';
-    this.form2.patchValue({
-      fromDate: null,
-      toDate: null,
-    });
+    if (!this.partenaire){
+      this.form2.patchValue({
+        fromDate: null,
+        toDate: null,
+      });
+    }
     this.offset = 0;
     const offset = this.offset;
     let source = this.natureSelectedValue;
@@ -361,7 +426,6 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
       fromDate,
       toDate,
     };
-    console.log('natureChanged', this.offset, changesObject);
     if (this.natureSelectedValue === 'nouvelle' && this.origine !== "AW") {
       this.getNouvellesDemandes(offset, changesObject);
     } else if (this.natureSelectedValue === 'prequalifier') {
@@ -380,8 +444,6 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
 
 
   public exportAsExcelFile(): void {
-    console.log(this.natureSelectedValue);
-
     if (this.natureSelectedValue === 'prequalifier') {
       this.callServer.getStatsPreQualif().subscribe((res: any) => {
         let data = res.resultat;
@@ -415,7 +477,6 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
   }
 
   public exportDataAsExcelFile(): void {
-    console.log(this.natureSelectedValue);
     let source = this.natureSelectedValue;
     let mot_cle = this.selectedCINValue ? this.selectedCINValue : '';
     let statut_dem = this.selectedValue ? this.selectedValue : '';
@@ -451,17 +512,22 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
       this.callServer
         .getDataStatsPreQualif(changesObject)
         .subscribe((res: any) => {
-          let data = res.resultat;
-          const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-          const workbook: XLSX.WorkBook = {
-            Sheets: { data: worksheet },
-            SheetNames: ['data'],
-          };
-          const excelBuffer: any = XLSX.write(workbook, {
-            bookType: 'xlsx',
-            type: 'array',
-          });
-          this.saveAsExcelFile(excelBuffer, 'demandes_pré-qualifiées');
+          if (changesObject.origine === "AW") {
+            let downlowdURL = window.URL.createObjectURL(res)
+            FileSaver.saveAs(downlowdURL, "reporting AWB.xlsx"+EXCEL_EXTENSION)
+          } else {
+            let data = res.resultat;
+            const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+            const workbook: XLSX.WorkBook = {
+              Sheets: { data: worksheet },
+              SheetNames: ['data'],
+            };
+            const excelBuffer: any = XLSX.write(workbook, {
+              bookType: 'xlsx',
+              type: 'array',
+            });
+            this.saveAsExcelFile(excelBuffer, 'demandes_pré-qualifiées');
+          }
         });
     }
 
@@ -469,17 +535,22 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
       this.callServer
         .getDataStatsQualif(changesObject)
         .subscribe((res: any) => {
-          let data = res.resultat;
-          const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-          const workbook: XLSX.WorkBook = {
-            Sheets: { data: worksheet },
-            SheetNames: ['data'],
-          };
-          const excelBuffer: any = XLSX.write(workbook, {
-            bookType: 'xlsx',
-            type: 'array',
-          });
-          this.saveAsExcelFile(excelBuffer, 'demandes_qualifées');
+          if (changesObject.origine === "AW") {
+            let downlowdURL = window.URL.createObjectURL(res)
+            FileSaver.saveAs(downlowdURL, "reporting AWB.xlsx"+EXCEL_EXTENSION)
+          } else {
+            let data = res.resultat;
+            const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+            const workbook: XLSX.WorkBook = {
+              Sheets: { data: worksheet },
+              SheetNames: ['data'],
+            };
+            const excelBuffer: any = XLSX.write(workbook, {
+              bookType: 'xlsx',
+              type: 'array',
+            });
+            this.saveAsExcelFile(excelBuffer, 'demandes_qualifées');
+          }
         });
     }
 
@@ -487,17 +558,22 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
       this.callServer
         .getDataStatsNouvelle(changesObject)
         .subscribe((res: any) => {
-          let data = res.resultat;
-          const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-          const workbook: XLSX.WorkBook = {
-            Sheets: { data: worksheet },
-            SheetNames: ['data'],
-          };
-          const excelBuffer: any = XLSX.write(workbook, {
-            bookType: 'xlsx',
-            type: 'array',
-          });
-          this.saveAsExcelFile(excelBuffer, 'nouvelle_demandes');
+          if (changesObject.origine === "AW") {
+            let downlowdURL = window.URL.createObjectURL(res)
+            FileSaver.saveAs(downlowdURL, "reporting AWB.xlsx"+EXCEL_EXTENSION)
+          } else {
+            let data = res.resultat;
+            const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+            const workbook: XLSX.WorkBook = {
+              Sheets: { data: worksheet },
+              SheetNames: ['data'],
+            };
+            const excelBuffer: any = XLSX.write(workbook, {
+              bookType: 'xlsx',
+              type: 'array',
+            });
+            this.saveAsExcelFile(excelBuffer, 'nouvelle_demandes');
+          }
         });
     }
 
@@ -505,17 +581,22 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
       this.callServer
         .getDataStatsEvolan(changesObject)
         .subscribe((res: any) => {
-          let data = res.resultat;
-          const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-          const workbook: XLSX.WorkBook = {
-            Sheets: { data: worksheet },
-            SheetNames: ['data'],
-          };
-          const excelBuffer: any = XLSX.write(workbook, {
-            bookType: 'xlsx',
-            type: 'array',
-          });
-          this.saveAsExcelFile(excelBuffer, 'demandes_envoyées_evolan');
+          if (changesObject.origine === "AW") {
+            let downlowdURL = window.URL.createObjectURL(res)
+            FileSaver.saveAs(downlowdURL, "reporting AWB"+EXCEL_EXTENSION)
+          } else {
+            let data = res.resultat;
+            const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+            const workbook: XLSX.WorkBook = {
+              Sheets: { data: worksheet },
+              SheetNames: ['data'],
+            };
+            const excelBuffer: any = XLSX.write(workbook, {
+              bookType: 'xlsx',
+              type: 'array',
+            });
+            this.saveAsExcelFile(excelBuffer, 'demandes_envoyées_evolan');
+          }
         });
     }
   }
@@ -532,11 +613,16 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
       EXCEL_EXTENSION
     );
   }
+  clickEventsubscription:Subscription;
   ngOnInit(): void {
     this.form2 = new FormGroup({
       fromDate: new FormControl(null, { validators: [Validators.required] }),
       toDate: new FormControl(null, { validators: [Validators.required] }),
     });
+    this.clickEventsubscription= this.sharedService.getClickEvent().subscribe(()=>{
+      this.creation = true
+      this.send(null);
+      })
   }
 
   reloadComponent() {
@@ -553,24 +639,22 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
 
 
         this.displayedColumns = [
-          'valeurid',
+          'id',
           'nom',
-          
           'cin',
-          'telgsm',
+          'typeclient',
           'ville',
           'agence',
           'codeagence',
           'entry_date',
-          'dateDeblocage',
-          
           'montantdemande',
-          'nbrappel',
-          'resultatTraitement',
-          'statuttraitement',
-          'montantdebloque',
-          'delay_trait',
-          'options',
+          'raisonsociale',
+          'ice',
+          'rcommerce',
+          'utm_source',
+          'utm_produit',
+          'ref_campagne',
+          'options'
         ];
 
         this.dataLength = personnes.length;
@@ -604,37 +688,39 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
         (res: any) => {
           let personnes = res.msg;
           personnes.forEach((p) => {
-            if (p.resultatTraitement==='Intéressé' && (!p.statuttraitement.endsWith('bloquée') && p.statuttraitement !=='Demande rejetée')){
+            
+            if (p.resultatTraitement === 'Intéressé' && (p.statuttraitement !== 'Demande débloquée' && p.statuttraitement !== 'Demande rejetée')) {
               p.isSomethingElse = true
-              console.log(p.resultatTraitement, p.statuttraitement);
-              
             }
             if (p.dateupdate) {
-              
+
               let dateupdate = new Date(p.dateupdate);
               let dateinsert = new Date(p.dateinsert);
               let dateDiff = Math.floor(
                 -(dateinsert.getTime() - dateupdate.getTime()) /
                 (1000 * 60 * 60 * 24)
               ); // in days
+              console.log("dateinsert :",dateinsert, "\,dateupdate :",dateupdate);
+              console.log("diff = ", dateDiff, " days");
+              
+              
               p.delay_trait = dateDiff;
-              let dateNow: any = new Date();
-              let dateUpdate: any = new Date(p.dateupdate);
-              let diffTime = Math.abs(dateNow - dateUpdate);
-              let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-              if (diffDays > 10) {
-                p.en_retard = true
-              }
+            } else {
+              let dateupdate = new Date();
+              let dateinsert = new Date(p.dateinsert);
+              let dateDiff = Math.floor(
+                -(dateinsert.getTime() - dateupdate.getTime()) /
+                (1000 * 60 * 60 * 24)
+              );
+              p.delay_trait = dateDiff;
             }
           });
           this.displayedColumns = [
             'valeurid',
             'nom',
-            
             'cin',
-            'telgsm',
+            'typeclient',
             'ville',
-
             'agence',
             'codeagence',
             'emaildr',
@@ -642,7 +728,6 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
             'entry_date',
             'dateDeblocage',
             'dateinsert',
-            
             'montantdemande',
             'nbrappel',
             'resultatTraitement',
@@ -651,7 +736,7 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
             'montantdebloque',
             'user',
             'delay_trait',
-            'options',
+            'options'
           ];
 
           this.dataLength = personnes.length;
@@ -684,13 +769,13 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
       (res: any) => {
         let personnes = res.results;
         personnes.forEach((p) => {
-          if (p.resultatTraitement==='Intéressé' && (!p.statuttraitement.endsWith('bloquée') && p.statuttraitement !=='Demande rejetée')){
+          
+          if (p.resultatTraitement === 'Intéressé' && (!p.statuttraitement.endsWith('bloquée') && p.statuttraitement !== 'Demande rejetée')) {
             p.isSomethingElse = true
-            console.log(p.resultatTraitement, p.statuttraitement);
-            
+
           }
           if (p.dateupdate) {
-            
+
             let dateupdate = new Date(p.dateupdate);
             let dateinsert = new Date(p.dateinsert);
             let dateDiff = Math.floor(
@@ -698,15 +783,23 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
               (1000 * 60 * 60 * 24)
             ); // in days
             p.delay_trait = dateDiff;
+          } else {
+            let dateupdate = new Date();
+            let dateinsert = new Date(p.dateinsert);
+            let dateDiff = Math.floor(
+              -(dateinsert.getTime() - dateupdate.getTime()) /
+              (1000 * 60 * 60 * 24)
+            );
+            p.delay_trait = dateDiff;
           }
         });
 
         this.displayedColumns = [
           'valeurid',
           'nom',
-          
+
           'cin',
-          'telgsm',
+          'typeclient',
           'ville',
           'agence',
           'codeagence',
@@ -714,7 +807,7 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
           'emailds',
           'entry_date',
           'dateDeblocage',
-          
+
           'montantdemande',
           'nbrappel',
           'resultatTraitement',
@@ -723,7 +816,7 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
           'montantdebloque',
           'user',
           'delay_trait',
-          'options',
+          'options'
         ];
 
         this.dataLength = personnes.length;
@@ -754,45 +847,56 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
       (res: any) => {
         let personnes = res.results;
         personnes.forEach((p) => {
-          if (p.resultatTraitement==='Intéressé' && (!p.statuttraitement.endsWith('bloquée') && p.statuttraitement !=='Demande rejetée')){
+          
+          if (p.resultatTraitement === 'Intéressé' && (!p.statuttraitement.endsWith('bloquée') && p.statuttraitement !== 'Demande rejetée')) {
             p.isSomethingElse = true
-            console.log(p.resultatTraitement, p.statuttraitement);
-            
+
           }
           if (p.dateupdate) {
-            
+
             let dateupdate = new Date(p.dateupdate);
             let dateinsert = new Date(p.dateinsert);
             let dateDiff = Math.floor(
               -(dateinsert.getTime() - dateupdate.getTime()) /
               (1000 * 60 * 60 * 24)
             ); // in days
+
+            p.delay_trait = dateDiff;
+          } else {
+            let dateupdate = new Date();
+            let dateinsert = new Date(p.dateinsert);
+            let dateDiff = Math.floor(
+              -(dateinsert.getTime() - dateupdate.getTime()) /
+              (1000 * 60 * 60 * 24)
+            );
             p.delay_trait = dateDiff;
           }
         });
 
         this.displayedColumns = [
-          'valeurid',
-          'nom',
-          
+          // 'valeurid',
+          'entry_date',
+          'typeclient',
+          'rcommerce',
+          'raisonsociale',
           'cin',
-          'telgsm',
+          'nom',
           'ville',
           'agence',
-          'codeagence',
-          'emaildr',
-          'emailds',
-          'entry_date',
-          'dateDeblocage',
-          
+          'telgsm',
+          // 'codeagence',
+          // 'emaildr',
+          // 'emailds',
+          // 'nbrappel',
+          // 'resultatTraitement',
+          // 'dateDeblocage',
+
+          // 'qualification',
           'montantdemande',
-          'nbrappel',
-          'resultatTraitement',
-          'qualification',
-          'statuttraitement',
-          'montantdebloque',
-          'delay_trait',
-          'options',
+          // 'statuttraitement',
+          // 'montantdebloque',
+          // 'delay_trait',
+          'options'
         ];
 
         this.dataLength = personnes.length;
@@ -826,6 +930,7 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
   }
 
   onChangeAll(btn) {
+
     this.pageNumber = 0;
     this.btn = btn;
     let act = this.btn;
@@ -859,12 +964,12 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
       fromDate,
       toDate,
     };
-    console.log(changesObject);
     this.offset = 0;
     const offset = this.offset;
     if (this.natureSelectedValue === 'nouvelle') {
       this.getNouvellesDemandes(offset, changesObject);
     } else if (this.natureSelectedValue === 'prequalifier') {
+
       this.getDemandesPrequalifies(offset, changesObject);
     } else if (this.natureSelectedValue === 'evolan') {
       this.getDemandesEvolan(offset, changesObject);
@@ -878,59 +983,83 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
   }
 
   send(personne): void {
-    console.log('hola', personne.datenaissance);
+
+    if (!personne){
+      
+      this.natureSelectedValue = 'nouvelle'
+    }
     if (this.natureSelectedValue === 'nouvelle') {
       // check if locked
-      let user = localStorage.getItem('role');
+      let user = localStorage.getItem('user');
       let obj = {
-        id: personne.id,
+        id: personne?.id,
+        typeclient: personne?.typeclient,
         user: user,
-        nom: personne.nom,
-        prenom: personne.prenom,
-        telgsm: personne.telgsm,
-        cin: personne.cin,
+        nom: personne?.nom,
+        prenom: personne?.prenom,
+        rcommerce: personne?.rcommerce,
+        ice: personne?.ice,
+        telgsm: personne?.telgsm,
+        cin: personne?.cin,
         origine: this.origine
       };
-      this.callServer.lock(obj).subscribe(
-        (res) => {
-          console.log('hola', personne.datenaissance);
-          const dialogRef = this.dialog.open(PersonneDetailsComponent, {
-            width: "80vw",
-            disableClose: true,
-            data: {
-              villes: this.villes,
-              personne,
-              source: this.natureSelectedValue,
-              origine: this.origine,
-              regions: this.regions
-            },
-          });
-
-          dialogRef.afterClosed().subscribe((result) => {
-            this.navigationChanged();
-            console.log('The dialog was closed', result);
-            if (result === 'nouvelle') {
-              this.dataSource.data = this.dataSourceToFilter.data.filter(
-                (e) => e.id != personne.id
-              );
-              this.dataSourceToFilter.data =
-                this.dataSourceToFilter.data.filter((e) => e.id != personne.id);
+      if ((this.origine==='RS' || this.origine==='WB')&& !this.creation){
+        this.callServer.lock(obj).subscribe(
+          (res) => {
+            const dialogRef = this.dialog.open(PersonneDetailsComponent, {
+              width: "80vw",
+              disableClose: true,
+              data: {
+                villes: this.villes,
+                personne,
+                source: this.natureSelectedValue,
+                origine: this.origine,
+                regions: this.regions
+              },
+            });
+  
+            dialogRef.afterClosed().subscribe((result) => {
+          
+              this.navigationChanged();
+              if (result === 'nouvelle') {
+                this.dataSource.data = this.dataSourceToFilter.data.filter(
+                  (e) => e.id != personne.id
+                );
+                this.dataSourceToFilter.data =
+                  this.dataSourceToFilter.data.filter((e) => e.id != personne.id);
+              }
+            });
+          },
+          (err) => {
+            if (err.status && err.status === 505) {
+              let snackBarRef = this.snackBar.open('lock failed!', 'OK', {
+                duration: 2000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+              });
+              snackBarRef.onAction().subscribe(() => {
+                snackBarRef.dismiss();
+              });
             }
-          });
-        },
-        (err) => {
-          if (err.status && err.status === 505) {
-            let snackBarRef = this.snackBar.open('lock failed!', 'OK', {
-              duration: 2000,
-              horizontalPosition: 'center',
-              verticalPosition: 'top',
-            });
-            snackBarRef.onAction().subscribe(() => {
-              snackBarRef.dismiss();
-            });
           }
-        }
-      );
+        );
+      }else{
+        const dialogRef = this.dialog.open(PersonneDetailsComponent, {
+          width: "80vw",
+          disableClose: true,
+          data: {
+            villes: this.villes,
+            personne,
+            source: this.natureSelectedValue,
+            origine: this.origine,
+            regions: this.regions
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+        });
+      }
+
     } else {
       const dialogRef = this.dialog.open(PersonneDetailsComponent, {
         width: "80vw",
@@ -945,8 +1074,8 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe((result) => {
+
         this.navigationChanged();
-        console.log('The dialog was closed', result);
         if (result === 'nouvelle') {
           this.dataSource.data = this.dataSourceToFilter.data.filter(
             (e) => e.id != personne.id
@@ -959,22 +1088,7 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
     }
   }
 
-  // getStatut(numtiers, codegestionnaire) {
-  //   let data = {
-  //     numTier: numtiers,
-  //     codeGest: codegestionnaire,
-  //   };
-  //   this.callServer.getStatus(data).subscribe(
-  //     (res: any) => {
-  //       console.log(res);
-  //       this.isAlert = true;
-  //       this.alert = res.EMP.Demande[0].statut;
-  //     },
-  //     (err) => {
-  //       console.log(err);
-  //     }
-  //   );
-  // }
+
   sendToEvolan(personne) {
     this.callServer.sendToEvolan(personne).subscribe(
       (res: any) => {
@@ -982,10 +1096,9 @@ export class PersonneMoraleGestionnaireComponent implements OnInit {
           data: res,
           valeurid: personne.valeurid,
         };
-        console.log('body to send', body);
       },
       (err) => {
-        console.log('error from 3737', err);
+        console.log(err);
       }
     );
   }

@@ -15,10 +15,10 @@ import { AgenceReorientationComponent } from '../agence-reorientation/agence-reo
   styleUrls: ['./agents-page.component.scss']
 })
 export class AgentsPageComponent implements OnInit {
-  codegestionnaire:string;
-  qualification:string;
+  codegestionnaire: string;
+  qualification: string;
   statusTraitement = [
-    { statut: 'Injoignable' },
+    { statut: 'Injoignable' },
     { statut: 'Non éligible' },
     { statut: 'Réorientée' },
     { statut: 'Hors zone' },
@@ -26,86 +26,97 @@ export class AgentsPageComponent implements OnInit {
     { statut: 'Intéressé plustard' },
     { statut: 'Client non venu au RDV' },
     { statut: 'RDV confirmé' },
-    { statut: 'Dossier en cours' },
+    { statut: 'Dossier en cours' },
     { statut: 'Prêt débloqué' },
     { statut: 'Prêt soldé' },
-    { statut: 'Contrat annulée'},
-    { statut: 'Contrat consolidé'}
-  ]; 
+    { statut: 'Contrat annulé' },
+    { statut: 'Contrat consolidé' }
+  ];
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   displayedColumns: any[];
   getDisplayedColumns(): string[] {
     return this.displayedColumns.filter(cd => !cd.hide).map(cd => cd.def);
- }
+  }
   dataSource: MatTableDataSource<any>;
-  display: string='none';
+  display: string = 'none';
   pageSizeOptions = [5, 10, 15];
-  codeagence : any;
+  codeagence: any;
   isHint = false;
   isAllerClicked = false;
-  agences:any;
+  agences: any;
   villes: any;
-  constructor(public dialog: MatDialog,private activatedRoute: ActivatedRoute,private callService:CallServerService,private newOrdersService: PmDataNewService, private activeroute:ActivatedRoute,  private snackBar: MatSnackBar,) {
-    this.callService.testConnection().subscribe((res)=>{
-      console.log(res);
+  constructor(public dialog: MatDialog, private activatedRoute: ActivatedRoute, private callService: CallServerService, private newOrdersService: PmDataNewService, private activeroute: ActivatedRoute, private snackBar: MatSnackBar,) {
+    this.callService.testConnection().subscribe((res) => {
     })
-    // this.callService.getVille().subscribe((res:any)=>{
-    //   console.log(res);
-    //   this.villes= res.villes.results;
-    // })
-    this.activeroute.params.subscribe((res)=>{
+ 
+    this.activeroute.params.subscribe((res) => {
       this.codeagence = res.codeagence
     })
-    // this.activatedRoute.data.subscribe((respp) => {
-    //   console.log(respp);
-      
-    //   this.villes = respp.villes.results;
-    // });
 
-    // this.callService.getAgences({ville:'ALL'}).subscribe((res:any)=>{
-    //   this.agences = res.results;
-    // })
-    
-   }
+
+  }
 
   ngOnInit(): void {
   }
-  openReorientedModal(personne){
-    if (personne.qualification ==="Réorientée"){
+  openReorientedModal(personne) {
+    if (personne.qualification === "Réorientée") {
       const dialogRef = this.dialog.open(AgenceReorientationComponent, {
         disableClose: true,
         data: {
-          villes:this.villes,
-          personne
+          villes: this.villes,
+          personne,
+          rdv: false
         },
-  
+
       });
-      dialogRef.afterClosed().subscribe((e)=>{
-        console.log("results after closing modal :",e);
-        if (e){
+      dialogRef.afterClosed().subscribe((e) => {
+        if (e) {
           personne.ville = e.ville;
           personne.agence = e.agence.agence;
           personne.codeagence = e.agence.codeagence;
+          let rdv = new Date(e.daterendezvous).toLocaleDateString('en-GB')
+
+          personne.daterendezvous = rdv;
+        }
+      })
+    }
+    if (personne.qualification === "RDV confirmé") {
+      const dialogRef = this.dialog.open(AgenceReorientationComponent, {
+        disableClose: true,
+        data: {
+          villes: this.villes,
+          personne,
+          rdv: true
+        },
+
+      });
+      dialogRef.afterClosed().subscribe((e) => {
+        if (e) {
+          let rdv = new Date(e.daterendezvous).toLocaleDateString('en-GB')
+
+          personne.daterendezvous = rdv;
+          // personne.agence = e.agence.agence;
+          // personne.codeagence = e.agence.codeagence;
         }
       })
     }
   }
-  getcodeagenes(ville){
-    this.callService.getAgences({ville:ville}).subscribe((res:any)=>{
+
+  getcodeagenes(ville) {
+    this.callService.getAgences({ ville: ville }).subscribe((res: any) => {
       this.agences = res.results;
     })
   }
   enterKeyPressed(event) {
-    console.log('clicked',event, event.keyCode);
-    
+
     if (event.keyCode === 13) {
-       this.getDemandesPrequalifQualif();
+      this.getDemandesPrequalifQualif();
     }
- }
+  }
   getDemandesPrequalifQualif() {
     this.isAllerClicked = true
-    if (!this.codegestionnaire){
+    if (!this.codegestionnaire) {
       this.isHint = true
       this.isAllerClicked = false
       return;
@@ -113,7 +124,7 @@ export class AgentsPageComponent implements OnInit {
     else {
       let data = {
         codegestionnaire: this.codegestionnaire,
-        codeagence:this.codeagence
+        codeagence: this.codeagence
       }
       this.newOrdersService.getDemandesPrequalifQualif(data).subscribe(
         (res: any) => {
@@ -155,13 +166,13 @@ export class AgentsPageComponent implements OnInit {
           this.dataSource = null
           this.isAllerClicked = false
           if (err.status === 500) {
-            let snackBarRef = this.snackBar.open('une erreur est survenue, veuillez réessayer plustard', 'OK', {duration:15000, horizontalPosition:'center', verticalPosition:'top'});
-            snackBarRef.onAction().subscribe(()=>{
+            let snackBarRef = this.snackBar.open('une erreur est survenue, veuillez réessayer plustard', 'OK', { duration: 15000, horizontalPosition: 'center', verticalPosition: 'top' });
+            snackBarRef.onAction().subscribe(() => {
               snackBarRef.dismiss()
             })
-          } else if (err.status === 401) {
-            let snackBarRef = this.snackBar.open('veuillez saisir une Matricule valide', 'OK', {duration:15000, horizontalPosition:'center', verticalPosition:'top'});
-            snackBarRef.onAction().subscribe(()=>{
+          } else if (err.status === 402) {
+            let snackBarRef = this.snackBar.open('veuillez saisir une Matricule valide', 'OK', { duration: 15000, horizontalPosition: 'center', verticalPosition: 'top' });
+            snackBarRef.onAction().subscribe(() => {
               snackBarRef.dismiss()
             })
           }
@@ -170,8 +181,8 @@ export class AgentsPageComponent implements OnInit {
     }
   }
 
-  validate(element){
-    if (!element.qualification || !this.codegestionnaire){
+  validate(element) {
+    if (!element.qualification || !this.codegestionnaire) {
       let snackBarRef = this.snackBar.open(
         'Veuillez remplir les champs obligatoires',
         'OK',
@@ -184,14 +195,13 @@ export class AgentsPageComponent implements OnInit {
       snackBarRef.onAction().subscribe(() => {
         snackBarRef.dismiss();
       });
-    }else {
+    } else {
       element.codegestionnairecible = this.codegestionnaire
-      // element.qualification = this.qualification
-      console.log("Qualification ....");
-      
-      this.newOrdersService.setDemandesPrequalifQualif(element).subscribe((res)=>{
-      console.log("Qualification .... Réponse");
 
+      this.newOrdersService.setDemandesPrequalifQualif(element).subscribe((res) => {
+        this.dataSource = null
+        this.isAllerClicked = false
+        this.getDemandesPrequalifQualif()
         let snackBarRef = this.snackBar.open(
           'mise à jour avec succès',
           'OK',
@@ -205,8 +215,8 @@ export class AgentsPageComponent implements OnInit {
         snackBarRef.onAction().subscribe(() => {
           snackBarRef.dismiss();
         });
-      }, (err)=>{
-        console.log("Qualification erreur",err)
+
+      }, (err) => {
 
         let snackBarRef = this.snackBar.open(
           'une erreur est survenue, veuillez réessayer plustard',

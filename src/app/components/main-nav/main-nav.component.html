@@ -47,7 +47,9 @@
             <a *ngIf="isBO" [routerLink]="['ppg']" [ngClass]="{ hidden: isHandset$ | async }" class="mat-button mat-button-base" aria-disabled="false"><span class="mat-button-wrapper">Personne Physique</span
         ><span class="mat-button-focus-overlay"></span
       ></a> -->
-            <a *ngIf="isBO" [routerLink]="['/register']" [ngClass]="{ hidden: isHandset$ | async }" class="mat-button mat-button-base" aria-disabled="false"><span class="mat-button-wrapper">Ajouter Utilisateur</span><span class="mat-button-focus-overlay"></span></a>
+            <a  (click)="simulate()" [ngClass]="{ hidden: isHandset$ | async }" class="mat-button mat-button-base" aria-disabled="false"><span class="mat-button-wrapper">Simulation</span><span class="mat-button-focus-overlay"></span></a>
+            <a (click)="setLoan()" [ngClass]="{ hidden: isHandset$ | async }" class="mat-button mat-button-base" aria-disabled="false"><span class="mat-button-wrapper">Ajouter une demande</span><span class="mat-button-focus-overlay"></span></a>
+            <a *ngIf="isBO" [routerLink]="['/register']" [ngClass]="{ hidden: isHandset$ | async }" class="mat-button mat-button-base" aria-disabled="false"><span class="mat-button-wrapper">Ajouter un utilisateur</span><span class="mat-button-focus-overlay"></span></a>
             <button (click)="logout()" mat-icon-button>
                 <mat-icon style="position: relative;
                 bottom: 10px;

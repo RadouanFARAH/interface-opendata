@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { DateAdapter } from '@angular/material/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CallServerService } from 'src/app/services/call-server.service';
 
@@ -13,12 +14,17 @@ export class AgenceReorientationComponent implements OnInit {
   ville: any;
   agenceHint = false;
   villeHint = false;
-  constructor(private callService: CallServerService, private matdiagRef: MatDialogRef<AgenceReorientationComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+  daterendezvous;
+  dateHint: boolean;
+  codeagence: any;
+    constructor(private dateadapter: DateAdapter<Date>,private callService: CallServerService, private matdiagRef: MatDialogRef<AgenceReorientationComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
     let ville = data.personne.ville
+    this.ville=data.personne.ville
+    this.codeagence=data.personne.codeagence
+    this.dateadapter.setLocale('en-GB'); // dd/MM/YYYY
 
-    console.log("ville from opening modal :", ville, data);
 
-    this.callService.getAgences({ ville: ville }).subscribe((res: any) => {
+    this.callService.getAgencesExecpt({ ville: ville, except:this.codeagence }).subscribe((res: any) => {
       this.agences = res.results;
     })
   }
@@ -30,21 +36,24 @@ export class AgenceReorientationComponent implements OnInit {
     this.matdiagRef.close()
   }
   validate() {
-    if (!this.ville) {
+    if (!this.daterendezvous) {
+      this.dateHint  = true
+      return
+    }
+    if (!this.ville && !this.data.rdv) {
       this.villeHint  = true
       return
     }
-    if (!this.agence) {
+    if (!this.agence && !this.data.rdv) {
       this.agenceHint  = true
       return
     }
-    this.matdiagRef.close({ agence: this.agence, ville: this.ville })
+    this.matdiagRef.close({ agence: this.agence, ville: this.ville, daterendezvous:this.daterendezvous })
   }
 
   getcodeagences() {
-    console.log("ville from changing it :", this.ville);
 
-    this.callService.getAgences({ ville: this.ville }).subscribe((res: any) => {
+    this.callService.getAgencesExecpt({ ville: this.ville,except:this.codeagence }).subscribe((res: any) => {
       this.agences = res.results;
     })
   }

@@ -51,6 +51,9 @@ import { AgentsPageComponent } from './components/agents-page/agents-page.compon
 import { MatTableExporterModule } from 'mat-table-exporter';
 import { AgenceReorientationComponent } from './components/agence-reorientation/agence-reorientation.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { NewDemandeComponent } from './components/new-demande/new-demande.component';
+import { SimulatorComponent } from './pages/simulator/simulator.component';
 
 const MaterialAngularModules = [
   MatRadioModule,
@@ -87,7 +90,7 @@ const MaterialAngularModules = [
 ];
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, HomeComponent, MainNavComponent , RegisterComponent , PersonneMoraleGestionnaireComponent, PersonneDetailsComponent, SafeHtmlPipe, AgentsPageComponent, AgenceReorientationComponent, ChangePasswordComponent],
+  declarations: [AppComponent, LoginComponent, HomeComponent, MainNavComponent , RegisterComponent , PersonneMoraleGestionnaireComponent, PersonneDetailsComponent, SafeHtmlPipe, AgentsPageComponent, AgenceReorientationComponent, ChangePasswordComponent, ForgotPasswordComponent, NewDemandeComponent, SimulatorComponent],
   imports: [MatTableExporterModule, HttpClientModule,BrowserModule,FormsModule,ReactiveFormsModule, AppRoutingModule, BrowserAnimationsModule,  LayoutModule, MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule, MatListModule, NgbModule, MaterialAngularModules],
   providers: [{
     provide:HTTP_INTERCEPTORS,

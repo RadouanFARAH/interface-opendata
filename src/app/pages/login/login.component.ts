@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ChangePasswordComponent } from 'src/app/components/change-password/change-password.component';
+import { ForgotPasswordComponent } from 'src/app/components/forgot-password/forgot-password.component';
 
 
 @Component({
@@ -18,6 +19,8 @@ export class LoginComponent implements OnInit {
   constructor(private dialog:MatDialog,private route:Router, private authService:AuthService, private fb:FormBuilder, private snackBar:MatSnackBar) { }
 
   ngOnInit(): void {
+    var connectbtn = document.getElementById('connect')
+
     this.data = this.fb.group({
       identifiant:['', Validators.required],
       password:['', Validators.required],
@@ -26,20 +29,19 @@ export class LoginComponent implements OnInit {
   }
 
   connectt(event){
-    console.log(event.keyCode);
     
     if (event.keyCode === 13 ){
-      console.log('enter');
       this.connect()
     }
   }
   connect(){
-    console.log('connected')
+    
     this.authService.login(this.data.value).subscribe((res:any)=>{
       localStorage.setItem('token',res.token)
       localStorage.setItem('role',res.role)
       localStorage.setItem('user',res.user)
       localStorage.setItem('origins',res.origins)
+      localStorage.setItem('organismes',res.organismes)
       localStorage.setItem('regions',res.regions)
       this.route.navigate(['home'])
     },(err)=>{
@@ -59,14 +61,22 @@ export class LoginComponent implements OnInit {
     
   }
 
-  forgetPassword(){
+  changePassword(){
     const dialogRef = this.dialog.open(ChangePasswordComponent, {
       disableClose: true,
       data: {},
-
     });
     dialogRef.afterClosed().subscribe((e)=>{
-      console.log("results after closing modal :",e);
+      if (e){
+      }
+    })
+  }
+  forgotPassword(){
+    const dialogRef = this.dialog.open(ForgotPasswordComponent, {
+      disableClose: true,
+      data: {},
+    });
+    dialogRef.afterClosed().subscribe((e)=>{
       if (e){
       }
     })

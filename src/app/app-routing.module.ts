@@ -9,15 +9,21 @@ import { PmDataService } from './services/pmData.service';
 import { AuthGuard } from './services/auth.guard';
 import { NotAuthGuard } from './services/not-auth.guard';
 import { AgentsPageComponent } from './components/agents-page/agents-page.component';
+import { NewDemandeComponent } from './components/new-demande/new-demande.component';
+import { TokenGuard } from './services/token.guard';
+import { SimulatorComponent } from './pages/simulator/simulator.component';
 
 
 const role = localStorage.getItem('role');
-console.log('routing', role, role === 'BO');
 const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
-    canActivate:[NotAuthGuard]
+    canActivate: [NotAuthGuard]
+  },
+  {
+    path: 'ajouter',
+    component: NewDemandeComponent
   },
   {
     path: 'home',
@@ -27,13 +33,17 @@ const routes: Routes = [
       {
         path: 'pmg',
         component: PersonneMoraleGestionnaireComponent,
-        resolve: { codes: PmDataService},
-        runGuardsAndResolvers: 'always'
+        resolve: { codes: PmDataService },
+        runGuardsAndResolvers: 'always',
+        canActivate: [TokenGuard]
+
       },
       {
         path: 'details',
         component: PersonneDetailsComponent,
-        runGuardsAndResolvers: 'always'
+        runGuardsAndResolvers: 'always',
+        canActivate: [TokenGuard]
+
       },
       {
         path: '',
@@ -46,6 +56,12 @@ const routes: Routes = [
   {
     path: 'register',
     component: RegisterComponent,
+    canActivate: [TokenGuard]
+  },
+  {
+    path: 'simulation',
+    component: SimulatorComponent,
+    canActivate: [TokenGuard]
   },
   {
     path: 'agence/:codeagence',
@@ -62,4 +78,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

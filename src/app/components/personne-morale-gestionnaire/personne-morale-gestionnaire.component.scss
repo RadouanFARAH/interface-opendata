@@ -6,28 +6,28 @@ table {
 .focused {
     background-color: lightblue !important;
 }
-.fields{
+.fields {
     display: table;
     margin: 0px auto;
-
 }
-.fieldss{
-display: flex;
-
+.fieldss {
+    display: table;
+    margin: 0px auto;
 }
-.button-form{
-    margin-left:20px;
+.button-form {
+    margin-left: 20px;
 }
-.btn-round{
+.btn-round {
     width: 50px;
     height: 50px;
     border-radius: 50%;
 }
 .filter {
     margin: 2px;
-
 }
-
+.mot_cle {
+    max-width: 100px;
+}
 .mat-tab-labels {
     display: grid !important;
     grid-template-columns: 25% 25% 25% 25% !important;
@@ -37,35 +37,38 @@ display: flex;
     margin: 3px;
     width: 98px;
 }
-.btnr{
+.btnr {
     margin: 3px;
-    width: 130px;
+    // width: 130px;
 }
-td , th {
+td,
+th {
     white-space: normal;
     word-wrap: break-word;
     max-width: 10%;
 }
-.none{
+.none {
     display: none;
-
 }
 
-.initial{
+.initial {
     display: initial;
 }
-.navigation-buttons{
-    margin-top: 20px;
-text-align: center;
+.navigation-buttons {
+    margin-top: 10px;
+    text-align: center;
 }
-.navigation-buttons button{
+.navigation-buttons button {
     margin: 5px;
-    width : 80px
+}
+.navigation-buttons #page {
+    width: 200px;
+}
+.make_blue {
+    .mat-cell{
+        color: #06166d;
     }
-    .navigation-buttons #page{
-        width : 200px
-        }
-
+}
 .mat-paginator-container {
     display: flex;
     align-items: center;
@@ -75,13 +78,14 @@ text-align: center;
     width: 100%;
 }
 
-.mat-paginator-range-actions button{
+.mat-paginator-range-actions button {
     background-color: white;
 }
-.mat-paginator, .mat-paginator-page-size .mat-select-trigger{
+.mat-paginator,
+.mat-paginator-page-size .mat-select-trigger {
     color: rgb(1, 0, 6);
 }
-.fileInput{
+.fileInput {
     width: 0.1px;
     height: 0.1px;
     opacity: 0;
@@ -90,7 +94,7 @@ text-align: center;
     z-index: -1;
 }
 
-.fileInput+label{
+.fileInput + label {
     font-size: 1.2em;
     font-weight: 700;
     color: white;
@@ -99,12 +103,14 @@ text-align: center;
     cursor: pointer;
     padding: 15px;
     border-radius: 4px;
-    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),0px 2px 2px 0px rgba(0, 0, 0, 0.14),0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+        0px 1px 5px 0px rgba(0, 0, 0, 0.12);
 }
-.fileInput+label:focus, .fileInput+label:hover{
+.fileInput + label:focus,
+.fileInput + label:hover {
     background-color: #ff3729;
     outline: none;
 }
 .fileInput + label * {
-    pointer-events:none
+    pointer-events: none;
 }

@@ -1,12 +1,14 @@
 <div mat-dialog-content>
-    <div>
+    <div *ngIf="!data.rdv">
         <h1>Réorienter vers :</h1>
+        
     </div>
     <form>
-        <div style="margin: 15px auto;">
+
+        <div style="margin: 15px auto;" *ngIf="!data.rdv">
             <mat-form-field appearance="standard">
                 <mat-label>La ville</mat-label>
-                <mat-select [(ngModel)]="ville" (selectionChange)="getcodeagences()"
+                <mat-select [(ngModel)]="ville" [ngModelOptions]="{standalone: true}" (selectionChange)="getcodeagences()"
                     [ngModelOptions]="{standalone: true}">
                     <mat-option *ngFor="let ville of data.villes" [value]="ville.ville">
                         {{ ville.ville }}
@@ -15,17 +17,26 @@
                 <mat-hint style="color: crimson" *ngIf="villeHint">Ville est obligatoire</mat-hint>
             </mat-form-field>
         </div>
-        <div style="margin: 15px auto;">
+        <div style="margin: 15px auto;" *ngIf="!data.rdv">
             <mat-form-field appearance="standard">
                 <mat-label>l'agence</mat-label>
-                <mat-select [(ngModel)]="agence" [ngModelOptions]="{standalone: true}">
+                <mat-select [(ngModel)]="agence" [ngModelOptions]="{standalone: true}" [ngModelOptions]="{standalone: true}">
                     <mat-option *ngFor="let agence of agences" [value]="agence">
-                        {{ agence.agence }}
+                        {{ agence.agence }} ({{agence.codeagence}})
                     </mat-option>
                 </mat-select>
                 <mat-hint style="color: crimson" *ngIf="agenceHint">Agence est obligatoire</mat-hint>
             </mat-form-field>
         </div>
+        <div style="margin: 15px auto;">
+            <mat-form-field appearance="fill">
+              <mat-label>Date Rendez-Vous</mat-label>
+              <input [(ngModel)]="daterendezvous" [ngModelOptions]="{standalone: true}" matInput [matDatepicker]="daterendezvouspicker" />
+              <mat-datepicker-toggle matSuffix [for]="daterendezvouspicker"></mat-datepicker-toggle>
+              <mat-datepicker #daterendezvouspicker></mat-datepicker>
+              <mat-hint style="color: crimson" *ngIf="dateHint">Date est obligatoire</mat-hint>
+            </mat-form-field>
+          </div>
     </form>
 </div>
 <div mat-dialog-actions>

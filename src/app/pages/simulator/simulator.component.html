@@ -1,0 +1,46 @@
+<div mat-dialog-content>
+    <div class="alert alert-danger" *ngIf="showAlert">
+        Montant inférieur à 1000DH ou durée inférieure à 6
+        <button type="button" class="close" (click)="closeAlert()">&times;</button>
+    </div>
+    <div>
+        <fieldset style="padding: 40px;">
+            <legend *ngIf="echeancefin">
+                <div class="card-body bodycard">
+                    <h3>Echéance Financière:</h3>
+                    <strong>{{ echeancefin | number:'1.0-0' }}</strong>
+                </div>
+            </legend>
+            <div class="row" style="width: 100%;">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="montant" class="text-secondary">Montant:</label>
+                        <input type="range" min="1000" step="100" max="50000" class="form-control-range"
+                            [(ngModel)]="simulation.montant">
+                        <input type="number" id="montant" class="form-control" min="1000"
+                            [(ngModel)]="simulation.montant">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="width: 100%;">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="duree" class="text-secondary">Durée:</label>
+                        <input type="number" id="duree" class="form-control" [(ngModel)]="simulation.duree">
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-danger" (click)="retour()">Retour</button>
+        </div>
+        <div class="col">
+            <button type="button" class="btn btn-primary" (click)="simler(simulation)">Simuler</button>
+        </div>
+    </div>
+</div>

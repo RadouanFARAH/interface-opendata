@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 })
 export class CallServerService {
   public url=environment.url;
+  // public url_opendata=environment.url_opendata;
   constructor(private http:HttpClient) { }
   setAgence(data){
     return this.http.post(`${this.url}/setAgence`,data)
@@ -16,6 +17,9 @@ export class CallServerService {
   }
   changePassword(data){
     return this.http.post(`${this.url}/changePassword`,data)
+  }
+  forgotPassword(data){
+    return this.http.post(`${this.url}/forgotPassword`,data)
   }
   setAgenceEtAgent(data){
     return this.http.post(`${this.url}/setAgenceEtAgent`,data)
@@ -37,12 +41,18 @@ export class CallServerService {
 
 
   getDataStatsQualif(data){
+
+    if (data.origine === 'AW') return this.http.post(`${this.url}/dataStatsQualif`, data, {responseType:"blob"})
     return this.http.post(`${this.url}/dataStatsQualif`, data)
+    
   }
   getDataStatsPreQualif(data){
+    
+    if (data.origine === 'AW') return this.http.post(`${this.url}/dataStatsPreQualif`, data, {responseType:"blob"})
     return this.http.post(`${this.url}/dataStatsPreQualif`, data)
   }
   getDataStatsEvolan(data){
+    if (data.origine === 'AW') return this.http.post(`${this.url}/dataStatsEvolan`, data, {responseType:"blob"})
     return this.http.post(`${this.url}/dataStatsEvolan`, data)
   }
   getDataStatsNouvelle(data){
@@ -50,7 +60,15 @@ export class CallServerService {
   }
 
 
+  // nouvelle_demande(data){
+  //   if (data.typeclient === "M") {
+  //     return this.http.post(`${this.url_opendata}/ajouterPersonneMorale`,data)
 
+  //   } else {
+  //     return this.http.post(`${this.url_opendata}/ajouterPersonnePhysique`,data)
+  //   }
+
+  // }
   sendToEvolan(data){
     if (data.typeclient === "M") {
       return this.http.post(`${this.url}/ajouterPersonneMoraleRS`,data)
@@ -70,7 +88,18 @@ export class CallServerService {
   getAgences(data){
     return this.http.post(`${this.url}/getAgencesRS`, data)
   }
-
+  getAgencesExecpt(data){
+    return this.http.post(`${this.url}/getAgencesExcept`, data)
+  }
+  getActivities(){
+    return this.http.get(`${this.url}/getActivities`)
+  }
+  checkExistants(data){
+    return this.http.post(`${this.url}/checkExistants`, data)
+  }
+  updateResultatTraitement(data){
+    return this.http.post(`${this.url}/updateResultatTraitement`, data)
+  }
   getAnomalies(valeurid){
     return this.http.post(`${this.url}/getAnomalies`, {valeurid})
   }
@@ -105,11 +134,11 @@ export class CallServerService {
   }
 
   notifyDPRM(){
-    console.log(`done3`);
     
     return this.http.get(`${this.url}/notifyDPRM`)
   }
-  MAJdemandeSorts2(){
+  MAJdemandeSorts(){
+    // return this.http.get(`${this.url}/MAJdemandeSorts`)
     return this.http.get(`${this.url}/MAJdemandeSorts2`)
   }
   getCodeAgence(data){

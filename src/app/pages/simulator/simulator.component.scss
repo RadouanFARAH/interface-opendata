@@ -1,0 +1,68 @@
+.list-md .item-input:last-child {
+    border-bottom: 0px;
+}
+.scroll-content {
+
+    background-color: #d9d9d9
+}
+.headercard {
+    BACKGROUND-COLOR: #32db64;
+    text-align: center;
+    font-weight: bold;
+}
+.bodycard {
+    text-align: center;
+    padding-top: 10px !important;
+    font-weight: bold;
+    font-size: 16px
+}
+input[type=submit] {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.th {
+    text-align: center;
+    background-color: #87be33;
+    color: white;
+}
+legend {
+    background-color: #87be33;
+    color: #fff;
+    border-radius: 8px;
+    padding: 3px 6px;
+}
+fieldset {
+    border: 1px solid #999;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 0 10px #999;
+}
+.output {
+    font: 1rem 'Fira Sans', sans-serif;
+}
+input {
+    margin: .4rem;
+}
+table {
+    border-radius: 1em;
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 97%;
+    margin-left: 9px;
+    overflow: hidden;
+}
+td,
+th {
+    border: 2px solid #5abce8;
+    text-align: left;
+    padding: 8px;
+}
+tr:nth-child(even) {
+    background-color: #d2f1ff;
+}

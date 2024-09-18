@@ -8,6 +8,8 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { JwtHelperService } from "@auth0/angular-jwt";
+
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +25,10 @@ export class NotAuthGuard implements CanActivate {
     | boolean
     | UrlTree {
     let token = this.authService.getToken();
-    if (token) {
+    const helper = new JwtHelperService();
+    const isExpired = helper.isTokenExpired(token);
+
+    if (token && !isExpired) {
       this.route.navigate(['home'])
       return false;
     } else {

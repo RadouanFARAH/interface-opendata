@@ -51,7 +51,6 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.data.value);
     this.callServer.register(this.data.value).subscribe((res)=>{
       let snackBarRef = this.snackBar.open('Utilisateur enregistré en attente de validation!', 'OK', {duration:15000, horizontalPosition:'center', verticalPosition:'top', panelClass:"successClassSnack"});
       snackBarRef.onAction().subscribe(()=>{

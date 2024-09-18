@@ -1,14 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
-
+@import 'bootstrap/dist/css/bootstrap.min.css';
 @import '~@angular/material/theming';
 // Define a custom typography config that overrides the font-family as well as the
 // `headlines` and `body-1` levels.
-$custom-typography: mat-typography-config( $font-family: 'Nunito');
+$custom-typography: mat-typography-config( $font-family: 'Poppins');
 @include angular-material-typography($custom-typography);
 @include mat-core($custom-typography);
+@font-face {
+    font-family: Poppins;
+    src: url("../src/assets/fonts/Poppins-Regular.ttf");
+}
+@font-face {
+    font-family: Montserrat;
+    src: url("../src/assets/fonts/Montserrat-Regular.ttf");
+}
 html,
 body {
-    background: rgb(255, 255, 255);
+    // background: rgb(255, 255, 255);
     background: linear-gradient(90deg, rgba(115,249,101,1) 0%, rgba(136,161,249,1) 100%);
     background-repeat: no-repeat;
     height: 100vh;
@@ -18,10 +26,10 @@ body {
 
 body {
     margin: 0;
-    font-family: 'Nunito';
+    font-family: 'Poppins', 'Montserrat';
 }
 .mat-select-panel{
-    max-width: 170px !important;
+    // max-width: 170px !important;
     box-shadow: none !important;
 }
 .mat-option{
@@ -102,6 +110,7 @@ mat-sidenav-content {
 
 .mat-form-field-flex {
     border-radius: 5px !important;
+    padding: 0.5em .5em 0 .5em !important;
 }
 .mat-form-field-wrapper {
     padding-bottom: 0 !important;
@@ -188,7 +197,8 @@ input{
 }
 .mat-form-field .mat-form-field-flex {
     background-color: whitesmoke;
-    border: 1px solid rgb(5, 5, 221);
+    border: 0.5px solid rgb(43, 43, 49);
+    box-shadow: 0 0 20px 2 rgb(40, 40, 59);
 }
 
 .mat-form-field-prefix .mat-icon, .mat-form-field-suffix .mat-icon {
@@ -213,4 +223,9 @@ input{
 }
 .mat-paginator, .mat-paginator-page-size .mat-select-trigger{
     color: rgb(1, 0, 6);
+}
+.make_blue {
+    .mat-cell{
+        color: #06166d;
+    }
 }

@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
-  //  url:"https://localhost:4200/api",
-  url:"https://intranet.alamana.org.ma:8888/api",
-  //  url:"https://192.168.150.40:3132",
+  // url:"https://intranet.alamana.org.ma:8888/api",
+  url:"https://opendata.alamana.org.ma:8888/api",
+
+  // url_opendata:"https://opendata.alamana.org.ma:3131/api"
 };
